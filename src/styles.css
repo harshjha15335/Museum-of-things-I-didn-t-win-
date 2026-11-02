@@ -1,0 +1,526 @@
+/* Visual system (spec Part E): seven colours, Fraunces + Inter, motion tokens. */
+:root {
+  --plaster: #e7e4de;
+  --stone: #c9c5be;
+  --gunmetal: #2b3138;
+  --navy: #1c2733;
+  --gold: #e0b85a;
+  --red: #b33a3a;
+  --monitor: #6e92b5;
+  --bg: #10171f;
+  --display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--plaster);
+  font-family: var(--ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow: hidden;
+}
+
+button {
+  font-family: var(--ui);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.app,
+.canvas-wrap {
+  position: fixed;
+  inset: 0;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.overlay > * {
+  pointer-events: auto;
+}
+
+/* ---------- shared controls ---------- */
+.ui-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(201, 197, 190, 0.45);
+  background: rgba(28, 39, 51, 0.82);
+  color: var(--plaster);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 150ms linear, background 150ms linear;
+}
+.ui-btn:hover {
+  border-color: var(--gold);
+}
+.ui-btn.gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+}
+.ui-btn.gold:hover {
+  background: #e8c672;
+}
+.ui-btn.big {
+  min-height: 50px;
+  padding: 0 26px;
+  font-size: 12px;
+}
+.text-btn {
+  min-height: 44px;
+  padding: 0 12px;
+  background: none;
+  border: 0;
+  color: var(--stone);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+}
+.text-btn:hover {
+  color: var(--plaster);
+}
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  color: var(--stone);
+  font-size: 18px;
+  cursor: pointer;
+}
+.icon-btn:hover {
+  color: var(--gold);
+}
+
+.kicker {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------- top bar ---------- */
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  pointer-events: none;
+  animation: fadeIn 400ms ease-out both;
+}
+.topbar > * {
+  pointer-events: auto;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.progress-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--stone);
+}
+.diamonds {
+  display: flex;
+  gap: 10px;
+}
+.diamond {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border: 1.5px solid var(--gold);
+  display: inline-block;
+}
+.diamond.filled {
+  background: var(--gold);
+  animation: diamondFill 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- plaque column ---------- */
+.plaque-col {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: plaqueIn 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.plaque {
+  background: rgba(28, 39, 51, 0.9);
+  border-left: 2px solid var(--gold);
+  padding: 18px 20px 18px;
+}
+.plaque-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 21px;
+  line-height: 1.25;
+  margin: 8px 0 0;
+  color: var(--plaster);
+}
+.plaque-hint {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--stone);
+}
+.plaque-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.dossier {
+  position: relative;
+  background: rgba(28, 39, 51, 0.92);
+  border: 1px solid rgba(201, 197, 190, 0.22);
+  padding: 16px 20px;
+  animation: plaqueIn 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  overflow: hidden;
+}
+.dossier dl {
+  margin: 10px 0 0;
+}
+.dossier-row {
+  padding: 7px 0;
+  border-top: 1px solid rgba(201, 197, 190, 0.14);
+}
+.dossier-row dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+.dossier-row dd {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--plaster);
+}
+/* Red is for shapes/borders only (spec E1): the stamp is a red bordered frame with plaster text. */
+.dossier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+}
+.stamp {
+  padding: 6px 10px;
+  border: 3px solid var(--red);
+  background: rgba(179, 58, 58, 0.85);
+  color: var(--plaster);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  transform: rotate(-6deg);
+  animation: stamp 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* ---------- captions ---------- */
+.captions {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  width: min(760px, calc(100vw - 520px));
+  min-width: 420px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 10px 10px 18px;
+  background: rgba(16, 23, 31, 0.86);
+  border: 1px solid rgba(201, 197, 190, 0.16);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms linear, visibility 0s linear 300ms;
+}
+.captions.on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 300ms linear;
+}
+.caption-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  align-self: flex-start;
+  padding-top: 5px;
+}
+.caption-text {
+  flex: 1;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--plaster);
+  min-height: 1.45em;
+  max-height: 2.9em;
+  overflow: hidden;
+  animation: fadeIn 200ms linear;
+}
+.caption-ctrls {
+  display: flex;
+}
+
+/* ---------- next / back ---------- */
+.nextnav {
+  position: absolute;
+  right: 24px;
+  bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 300ms ease-out both;
+}
+.ui-btn.next {
+  min-height: 46px;
+  padding: 0 20px;
+}
+.ui-btn.next.pulse {
+  animation: nextPulse 1.1s ease-in-out 1;
+}
+
+/* ---------- toast ---------- */
+.toast {
+  position: absolute;
+  top: 74px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(28, 39, 51, 0.92);
+  border: 1px solid var(--gold);
+  color: var(--plaster);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.toast.on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.toast-diamond {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+/* ---------- footer ---------- */
+.footer {
+  position: absolute;
+  left: 24px;
+  bottom: 8px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: rgba(201, 197, 190, 0.7);
+  pointer-events: none;
+}
+.footer.static {
+  position: static;
+  margin: 40px 0 16px;
+}
+
+/* ---------- start screen ---------- */
+.start {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  transform: translateX(-50%);
+  width: min(900px, calc(100vw - 32px));
+  text-align: center;
+  transition: opacity 500ms ease;
+  animation: fadeIn 900ms ease-out 300ms both;
+}
+.start.leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+.start-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 52px;
+  line-height: 1.08;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--plaster);
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
+}
+.start-sub {
+  margin: 16px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.start-tagline {
+  margin: 12px auto 0;
+  max-width: 560px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--stone);
+}
+.start-actions {
+  margin-top: 26px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ---------- fades ---------- */
+#fade-cut {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.intro-fade {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  z-index: 6;
+  animation: introFade 800ms ease-out 150ms both;
+}
+
+/* ---------- 2D placeholder ---------- */
+.m2d {
+  height: 100%;
+  overflow-y: auto;
+  padding: 40px 16px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+body:has(.m2d) {
+  overflow: auto;
+}
+.m2d .start-title {
+  font-size: 34px;
+}
+.m2d-note {
+  color: var(--stone);
+  font-size: 14px;
+}
+.m2d-room {
+  margin-top: 36px;
+  padding: 18px 20px;
+  background: var(--navy);
+  border-left: 2px solid var(--gold);
+}
+.m2d-room p {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* ---------- motion ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes introFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes plaqueIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes diamondFill {
+  from {
+    transform: rotate(45deg) scale(1.3);
+  }
+  to {
+    transform: rotate(45deg) scale(1);
+  }
+}
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.4);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+@keyframes nextPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(224, 184, 90, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(224, 184, 90, 0.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .start-title {
+    font-size: 36px;
+  }
+}
