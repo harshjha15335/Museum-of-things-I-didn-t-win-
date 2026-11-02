@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { exhibits } from '../../content/exhibits';
-import { C, EXHIBIT_POS } from '../palette';
+import { C, EXHIBIT_POS, RING } from '../palette';
 import { Plinth } from '../Spot';
 import { makeCanvasTexture, spacedText } from '../textures';
 
@@ -14,7 +14,7 @@ export function Lobby() {
       makeCanvasTexture(1024, 512, (ctx, w, h) => {
         ctx.fillStyle = C.gold;
         ctx.fillRect(0, 0, w, h);
-        ctx.strokeStyle = C.navy;
+        ctx.strokeStyle = C.ink;
         ctx.lineWidth = 6;
         ctx.strokeRect(28, 28, w - 56, h - 56);
         const words = (ex.props?.plaque ?? '').split(' ');
@@ -26,7 +26,7 @@ export function Lobby() {
             font: '600 {s}px Fraunces, Georgia, serif',
             size: 64,
             spacing: 0.08,
-            color: C.navy,
+            color: C.ink,
             maxWidth: w - 120,
           }),
         );
@@ -38,14 +38,14 @@ export function Lobby() {
       makeCanvasTexture(2048, 307, (ctx, w, h) => {
         ctx.fillStyle = C.gold;
         ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = C.navy;
+        ctx.fillStyle = C.ink;
         ctx.fillRect(0, 18, w, 3);
         ctx.fillRect(0, h - 21, w, 3);
         spacedText(ctx, ex.props?.band ?? '', w / 2, h / 2 + 4, {
           font: '600 {s}px Fraunces, Georgia, serif',
           size: 120,
           spacing: 0.12,
-          color: C.navy,
+          color: C.ink,
           maxWidth: w - 160,
         });
       }).tex,
@@ -54,7 +54,7 @@ export function Lobby() {
 
   return (
     <group>
-      <Plinth x={x} z={z} radius={1.05} />
+      <Plinth x={x} z={z} radius={1.05} ring={RING.lobby} />
       <group position={[x, 0.14, z]}>
         <mesh position={[0, 0.575, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.1, 1.15, 0.7]} />
@@ -71,7 +71,7 @@ export function Lobby() {
         </mesh>
       </group>
       {/* gold title band on the back wall */}
-      <mesh position={[x, 3.45, -3.98]}>
+      <mesh position={[x, 3.9, -3.98]}>
         <planeGeometry args={[6, 0.9]} />
         <meshStandardMaterial map={band} roughness={0.4} metalness={0.25} emissive={C.gold} emissiveIntensity={0.08} />
       </mesh>

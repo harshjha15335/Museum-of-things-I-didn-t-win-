@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { exhibits } from '../../content/exhibits';
 import { useMuseum } from '../../state/store';
-import { C, EXHIBIT_POS } from '../palette';
+import { C, EXHIBIT_POS, RING } from '../palette';
 import { Plinth } from '../Spot';
 import { ArtifactShell, GoldOutline } from '../ArtifactShell';
 import { makeCanvasTexture, spacedText } from '../textures';
@@ -119,7 +119,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, w: number, h: number, t: numbe
     ctx.globalAlpha = lp;
     const lx = [190, 500, 810];
     labels.forEach((l, i) =>
-      spacedText(ctx, l, lx[i], 46, {
+      spacedText(ctx, l, lx[i], 58, {
         font: '700 {s}px Inter, system-ui, sans-serif',
         size: 22,
         spacing: 0.2,
@@ -220,7 +220,7 @@ export function Samsung() {
 
   return (
     <group>
-      <Plinth x={x} z={z} radius={2.3} />
+      <Plinth x={x} z={z} radius={2.3} ring={RING.samsung} />
       <group position={[x, 0, z]}>
         {/* desk */}
         <mesh position={[0, deskTop - 0.03, 0]} castShadow receiveShadow>
@@ -251,7 +251,7 @@ export function Samsung() {
           </ArtifactShell>
           <Laptop x={1.05} lit={false} />
           {/* stack of three textbooks */}
-          {[C.navy, C.stone, C.gunmetal].map((c, i) => (
+          {[C.ink, C.stone, C.gunmetal].map((c, i) => (
             <mesh key={c} position={[1.55, 0.03 + i * 0.06, -0.2]} rotation={[0, 0.12 * (i - 1), 0]} castShadow>
               <boxGeometry args={[0.3, 0.055, 0.4]} />
               <meshStandardMaterial color={c} roughness={0.8} />
@@ -261,11 +261,11 @@ export function Samsung() {
       </group>
 
       {/* wall projection panel 5.2 × 2.6 */}
-      <mesh position={[x, 2.4, -3.97]}>
+      <mesh position={[x, 2.3, -3.97]}>
         <boxGeometry args={[5.4, 2.8, 0.04]} />
         <meshStandardMaterial color={C.gunmetal} roughness={0.5} metalness={0.5} />
       </mesh>
-      <mesh position={[x, 2.4, -3.94]}>
+      <mesh position={[x, 2.3, -3.94]}>
         <planeGeometry args={[5.2, 2.6]} />
         <meshBasicMaterial map={graph.tex} toneMapped={false} color="#C9D4E0" />
       </mesh>

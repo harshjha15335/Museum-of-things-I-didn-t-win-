@@ -74,6 +74,7 @@ export const site = {
   muteLabel: 'Mute',
   unmuteLabel: 'Unmute',
   progressLabel: 'Recovered',
+  bannerLabel: 'EXHIBIT',
   pendingExhibitHint: 'This exhibit is still being installed.',
   noWebGL:
     'You are viewing the text edition of the museum. The illustrated phone version is still being installed.',
@@ -88,7 +89,8 @@ export const exhibits: Exhibit[] = [
     title: 'The Curator',
     hint: 'Welcome. The exhibits are to your right.',
     counted: false,
-    station: { pos: [-2.6, 1.75, 5.6], target: [0.3, 1.25, -1.6], fov: 42 },
+    // Look slightly higher and wider than spec C3 so the taller atrium (ref 4) reads.
+    station: { pos: [-2.6, 1.75, 5.6], target: [0.3, 1.6, -1.6], fov: 46 },
     // audio: '/audio/00-prologue.mp3',  // TODO: Harsh records
     narration: [
       { text: "Welcome to the Museum of Things I Didn't Win.", start: 0.3, end: 3.8 },

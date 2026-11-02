@@ -12,13 +12,13 @@ export function Captions() {
   useEffect(() => {
     if (caption) setLast(caption);
   }, [caption]);
-  const visible = !!caption || narrating;
-  const shown = caption ?? last;
+  const shown = caption ?? (narrating ? last : null);
+  const visible = !!shown;
   return (
     <div className={`captions ${visible ? 'on' : ''}`} aria-hidden={!visible}>
       <span className="caption-label">{site.captionLabel.toUpperCase()}</span>
-      <p className="caption-text" key={shown?.key} aria-live="polite">
-        {shown?.text}
+      <p className="caption-text" key={(shown ?? last)?.key} aria-live="polite">
+        {(shown ?? last)?.text}
       </p>
       {mode === 'full' && (
         <span className="caption-ctrls">

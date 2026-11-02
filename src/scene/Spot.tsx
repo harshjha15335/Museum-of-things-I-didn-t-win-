@@ -13,7 +13,7 @@ export function Spot({
   active,
   boost = 1,
   lowPower,
-  color = C.gold,
+  color = C.spot,
   angle = 0.36,
 }: {
   x: number;
@@ -108,7 +108,7 @@ export function Plinth({
   x,
   z,
   radius,
-  ring = C.gold,
+  ring = C.redEmissive,
   lightRing = true,
 }: {
   x: number;
@@ -124,10 +124,22 @@ export function Plinth({
         <meshStandardMaterial color={C.pilaster} roughness={0.6} metalness={0.3} />
       </mesh>
       <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius + 0.05, 0.018, 8, 96]} />
+        <torusGeometry args={[radius + 0.06, 0.022, 8, 96]} />
         <meshBasicMaterial color={ring} toneMapped={false} />
       </mesh>
-      {lightRing && <pointLight position={[0, 0.12, radius * 0.6]} color={ring} intensity={0.9} distance={3.2} decay={1.6} />}
+      {/* soft glow halo around the ring */}
+      <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[radius - 0.02, radius + 0.32, 96]} />
+        <meshBasicMaterial
+          color={ring}
+          transparent
+          opacity={0.13}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
+      {lightRing && <pointLight position={[0, 0.12, radius * 0.6]} color={ring} intensity={1.6} distance={3.6} decay={1.5} />}
     </group>
   );
 }

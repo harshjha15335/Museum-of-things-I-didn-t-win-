@@ -32,6 +32,10 @@ Inspect: click the glowing artifact, the Inspect button, or `Enter` / `Space`. `
 | `src/ui/` | HTML overlay: top bar, plaque, dossier, captions, Next, toast, start screen, footer. |
 | `public/audio/` | Drop `00-prologue.mp3` … `05-vault.mp3` here, then uncomment `audio:` in the content file and re-sync cue timings. |
 
+## Look (v2.2)
+
+On Harsh's request the colour scheme and architecture were reworked to sit much closer to the spec's reference screenshots, without copying them: near-black charcoal, warm isolated exhibit light, red security rings and lasers, a mirror-dark floor, room dividers with vertical light strips, tall numbered room banners, a gold floor guide line and a taller, hazy lobby. GSoC keeps a gold ring as the one success. Tokens live in `src/scene/palette.ts` and `src/styles.css`.
+
 ## Build status (spec Part G)
 
 - [x] **Phase 1**: setup, content file, hall, camera rig with every station, top bar, plaque, captions (timer mode), Next, footer, start screen, Lobby and Samsung end to end. Quick Tour runs too.

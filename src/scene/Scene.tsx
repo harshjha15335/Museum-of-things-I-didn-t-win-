@@ -76,13 +76,13 @@ export function Scene() {
       onPointerMissed={() => (document.body.style.cursor = '')}
     >
       <color attach="background" args={[C.bg]} />
-      <fog attach="fog" args={[C.bg, 18, 46]} />
+      <fog attach="fog" args={[C.bg, 16, 42]} />
       <HallLights lowPower={lowPower} />
-      <Hall />
+      <Hall lowPower={lowPower} />
       <Spots />
       <Lobby />
       <Samsung />
-      <Placeholder id="hackerrank" ring={C.red} />
+      <Placeholder id="hackerrank" />
       <Placeholder id="gsoc" />
       <Placeholder id="deadline" />
       <Placeholder id="vault" />

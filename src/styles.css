@@ -1,13 +1,14 @@
 /* Visual system (spec Part E): seven colours, Fraunces + Inter, motion tokens. */
 :root {
-  --plaster: #e7e4de;
-  --stone: #c9c5be;
-  --gunmetal: #2b3138;
-  --navy: #1c2733;
+  /* v2.2 palette: charcoal + warm light + red security accents (see src/scene/palette.ts) */
+  --plaster: #ece8e1;
+  --stone: #b9b4ac;
+  --gunmetal: #2a2c31;
+  --ink: #131519;
   --gold: #e0b85a;
-  --red: #b33a3a;
+  --red: #c8323a;
   --monitor: #6e92b5;
-  --bg: #10171f;
+  --bg: #0a0b0d;
   --display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
   --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
@@ -61,7 +62,7 @@ button {
   min-height: 44px;
   padding: 0 16px;
   border: 1px solid rgba(201, 197, 190, 0.45);
-  background: rgba(28, 39, 51, 0.82);
+  background: rgba(19, 21, 25, 0.82);
   color: var(--plaster);
   font-size: 11px;
   font-weight: 700;
@@ -76,7 +77,7 @@ button {
 .ui-btn.gold {
   background: var(--gold);
   border-color: var(--gold);
-  color: var(--navy);
+  color: var(--ink);
 }
 .ui-btn.gold:hover {
   background: #e8c672;
@@ -178,7 +179,7 @@ button {
   animation: plaqueIn 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 .plaque {
-  background: rgba(28, 39, 51, 0.9);
+  background: rgba(19, 21, 25, 0.9);
   border-left: 2px solid var(--gold);
   padding: 18px 20px 18px;
 }
@@ -204,7 +205,7 @@ button {
 
 .dossier {
   position: relative;
-  background: rgba(28, 39, 51, 0.92);
+  background: rgba(19, 21, 25, 0.92);
   border: 1px solid rgba(201, 197, 190, 0.22);
   padding: 16px 20px;
   animation: plaqueIn 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
@@ -240,7 +241,7 @@ button {
 .stamp {
   padding: 6px 10px;
   border: 3px solid var(--red);
-  background: rgba(179, 58, 58, 0.85);
+  background: rgba(200, 50, 58, 0.85);
   color: var(--plaster);
   font-size: 12px;
   font-weight: 800;
@@ -261,7 +262,7 @@ button {
   align-items: center;
   gap: 14px;
   padding: 10px 10px 10px 18px;
-  background: rgba(16, 23, 31, 0.86);
+  background: rgba(10, 11, 13, 0.86);
   border: 1px solid rgba(201, 197, 190, 0.16);
   opacity: 0;
   visibility: hidden;
@@ -323,7 +324,7 @@ button {
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  background: rgba(28, 39, 51, 0.92);
+  background: rgba(19, 21, 25, 0.92);
   border: 1px solid var(--gold);
   color: var(--plaster);
   font-size: 11px;
@@ -447,7 +448,7 @@ body:has(.m2d) {
 .m2d-room {
   margin-top: 36px;
   padding: 18px 20px;
-  background: var(--navy);
+  background: var(--ink);
   border-left: 2px solid var(--gold);
 }
 .m2d-room p {
