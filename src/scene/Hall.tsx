@@ -6,6 +6,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { exhibits, site } from '../content/exhibits';
 import { C, ARCHWAYS, BANNER_X, EXHIBIT_POS, LOBBY_END, LOBBY_H } from './palette';
 import { makeCanvasTexture, spacedText } from './textures';
+import { Architecture } from './Architecture';
 
 /**
  * One continuous gallery hall from primitives (spec C2, reworked v2.2).
@@ -29,7 +30,7 @@ const FIN_CZ = -4 + FIN_DEPTH / 2;
 
 type V3 = [number, number, number];
 
-function Instanced({
+export function Instanced({
   positions,
   scale,
   color,
@@ -143,14 +144,6 @@ export function Hall({ lowPower }: { lowPower: boolean }) {
     () => ARCHWAYS.flatMap((x) => [[x - 0.31, 2.4, -1.55] as V3, [x + 0.31, 2.4, -1.55] as V3]),
     [],
   );
-  const tracks = useMemo(() => {
-    const out: V3[] = [];
-    for (let x = LOBBY_END + 1.5; x < HALL_MAX_X; x += 3.5) {
-      if (x > 33 && x < 43) continue; // corridor has its own beams
-      out.push([x, 4.93, 0.6]);
-    }
-    return out;
-  }, []);
   const panelXs = [-5.2, 4.2, 18.2, 31.2, 51.6, 65.4, 81];
   // (banners sit just left of each exhibit; panels fill the gaps)
   const panelFrames = useMemo(() => panelXs.map((x) => [x, 2.35, -3.96] as V3), []);
@@ -234,7 +227,7 @@ export function Hall({ lowPower }: { lowPower: boolean }) {
       <Instanced positions={strips} scale={[0.03, 3.8, 0.06]} color={C.strip} basic />
 
       {/* Track-light fixtures */}
-      <Instanced positions={tracks} scale={[0.14, 0.14, 0.22]} color="#060708" roughness={0.6} metalness={0.3} />
+
 
       {/* Framed wall panels with small picture lights */}
       <Instanced positions={panelFrames} scale={[1.7, 2.3, 0.06]} color={C.gunmetal} roughness={0.5} metalness={0.5} />
@@ -269,6 +262,7 @@ export function Hall({ lowPower }: { lowPower: boolean }) {
         <meshBasicMaterial color={C.redEmissive} toneMapped={false} />
       </mesh>
       <Lasers />
+      <Architecture />
     </group>
   );
 }
@@ -327,11 +321,11 @@ export function HallLights({ lowPower }: { lowPower: boolean }) {
   const washXs = [10.5, 17.5, 24.5, 31.5, 45.5, 52.5, 59.5, 66.5, 73.5, 80.5];
   return (
     <>
-      <hemisphereLight args={['#5F6B7A', '#050506', 0.6]} />
+      <hemisphereLight args={["#5F6B7A", "#050506", 0.85]} />
       <ambientLight color="#8A93A0" intensity={0.05} />
       <Env />
       {washXs.map((x) => (
-        <pointLight key={x} position={[x, 4.5, -3.4]} color="#B9C2CE" intensity={lowPower ? 7 : 8.5} distance={6.5} decay={1.1} />
+        <pointLight key={x} position={[x, 4.5, -3.4]} color="#B9C2CE" intensity={lowPower ? 12 : 14} distance={7} decay={1.1} />
       ))}
       {/* Lobby atrium: cool light falling from the skylight, plus two soft wall grazers */}
       <spotLight
