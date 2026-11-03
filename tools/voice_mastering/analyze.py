@@ -108,8 +108,18 @@ def analyze(path):
 
 
 if __name__ == "__main__":
+    import os
+
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from common import FILES, NOTES
+
+    section = {v: k for k, v in FILES.items()}
     out = sys.argv[1]
-    rows = [analyze(p) for p in sys.argv[2:]]
+    rows = []
+    for p in sys.argv[2:]:
+        base = os.path.basename(p)
+        sec = section.get(base, "")
+        rows.append({"section": sec, **analyze(p), "notes": NOTES.get(sec, "")})
     with open(out, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
         w.writeheader()

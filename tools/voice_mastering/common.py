@@ -17,6 +17,18 @@ FILES = {
     "05-vault": "319a0619-44a1-4fe3-9e82-be72a28e6160.wav",
 }
 
+# What each take holds (from the words and the levels), written into recording_inventory.csv.
+NOTES = {
+    "00-intro": "opening cutscene; 'Lights down. Doors locked.' rushed and ~14 dB softer than the rest",
+    "00-lobby": "clean single take",
+    "01-samsung": "single take; 'ASTFLOW' rushed; the 'n't' of 'We didn't' is weak",
+    "02-hackerrank": "clean single take",
+    "03-gsoc": "clean single take",
+    "04-deadline": "contains a false start: first take of 'Give me five days...' (cut, retake kept)",
+    "05-vault": "app chime at 0-1.7 s, two takes of the opening, a false start 'We saved the...', and two takes of "
+                "'Inside... I build it' (first takes and the false start cut)",
+}
+
 # Edit decisions, in ORIGINAL file time (seconds). Found from word timings + energy segments.
 #  cut: remove [a, b) (boundaries are snapped to the quietest 10 ms within +-80 ms, 20 ms crossfade)
 #  pause: insert extra silence (s) at time t, to separate two phrases that run together

@@ -10,7 +10,7 @@ identically to every variant, so all variants stay sample-aligned and comparable
   nr80       stationary spectral gating (noisereduce), 80 % reduction, noise profile = the file's quietest frames
   A          <- Version A: DeepFilterNet3 capped at 24 dB where there is speech, uncapped in the pauses, and
              "guarded": in any 20 ms frame that is clearly speech (9 dB over the noise floor) but lost more
-             than 6 dB to DeepFilterNet, the spectral-gating result is used instead (1-3 % of frames).
+             than 6 dB to DeepFilterNet, the spectral-gating result is used instead (1-5 % of frames).
 How this was chosen (all measured, see reports/quality_report.md): speech recognition showed
 DeepFilterNet treating soft, breathy or fricative sounds as noise even when capped ("Lights down" lost
 24 dB; "file four" became "5.4"); spectral gating kept every word but a no-reference quality model

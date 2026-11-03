@@ -28,7 +28,7 @@ import numpy as np
 import torch
 from df.enhance import enhance, init_df
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from common import EDITS, FILES, SR, frame_db, highpass, load, quietest_near, save, speech_segments, splice  # noqa: E402
 
 vm = sys.argv[1]

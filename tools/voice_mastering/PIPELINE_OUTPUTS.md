@@ -10,7 +10,7 @@ Everything here was processed locally (no cloud services). The originals are unt
 | `mastered/` | **Version C, master.** `<name>_C_master.wav/.mp3` is the one the museum uses. `alternates/` has the master of the other path. -16 LUFS, true peak at or below -1.5 dBTP. |
 | `video_mix_versions/` | The same masters at -18 LUFS, for laying under music in a video edit. |
 | `comparisons/` | `_before_after.wav`: original, then the master, same loudness. `_all_versions.wav`: the first 10 s as original, A, B (DSP), C (DSP), B (Resemble), C (Resemble), 0.8 s apart, same loudness. Spectrogram PNGs. |
-| `reports/` | `recording_inventory.csv`, `loudness_report.csv`, `quality_report.md` (read this), `eq_curves.json`, `selection.json`, `quality_tables.md`. |
+| `reports/` | `quality_report.md` (read this first), `recording_inventory.csv`, `loudness_report.csv`, `quality_tables.md`, `eq_curves.json`, `selection.json`, and `measurements/` (raw QC and recognition output, edit logs, caption times). |
 | `scripts/` | The whole pipeline. `batch_master.py` runs it end to end. |
 
 Names: `00-intro` (opening cutscene), `00-lobby`, `01-samsung`, `02-hackerrank`, `03-gsoc`, `04-deadline`, `05-vault`.

@@ -42,7 +42,7 @@ On Harsh's request the colour scheme and architecture were reworked to sit much 
 - [x] **Phase 1**: setup, content file, hall, camera rig with every station, top bar, plaque, captions (timer mode), Next, footer, start screen, Lobby and Samsung end to end. Quick Tour runs too.
 - [ ] Phase 2: HackerRank, Corridor microgame, GSoC, Map, Evidence drawer
 - [ ] Phase 3: Deadline, Vault, Vault panel, Exit panel, reduced-motion polish
-- [ ] Phase 4: recordings, ambient + stings, real 2D mobile stage, performance pass, deploy
+- [ ] Phase 4: ~~recordings~~ (done: Harsh's narration, mastered and caption-timed), ambient + stings, real 2D mobile stage, performance pass, deploy
 - [ ] Phase 5–6: real experiment numbers, final copy, QA, submit
 
 Open inputs still marked `TODO` in the content file: ASTFLOW repo URL, QC-Devs FFprime URL and PRs, voice-build clips, experiment data, $3,000 answer, start date, video URL, contact.

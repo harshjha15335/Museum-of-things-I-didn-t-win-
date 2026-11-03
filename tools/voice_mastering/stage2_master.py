@@ -2,12 +2,12 @@
 
 Usage: python stage2_master.py <vm dir> [--no-a]
 
-Reads cleaned/<name>_A_clean.wav and, when present, enhanced/<name>_re_raw.wav (Resemble Enhance
-output from re_enhance.py, run on the A file). Two enhancement paths per file:
+Reads work/variants2/<name>_A.wav (stage1's Version A, before peak normalising) and, when all seven exist,
+enhanced/<name>_re_raw.wav (Resemble Enhance output from re_enhance.py, run on that A file). Two enhancement paths per file:
   dsp       B = one corrective/presence EQ for the whole set (match_eq_curve)
   resemble  B = Resemble Enhance (restoration + bandwidth extension) + a gentler EQ
 and for each path:
-  C = B -> de-esser -> gap expander -> compressor (2:1 above -25 dBFS at -23 LUFS) -> -16 LUFS -> true-peak limiter (-1.5 dBTP, verified)
+  C = B -> de-esser -> gap expander -> compressor (2:1 above -25 dBFS at -23 LUFS) -> -16 LUFS -> true-peak limiter (-1.8 dBTP, verified at or below -1.5)
   V = C at -18 LUFS (video-mix version: sits under music without being turned down later)
 A and B are exported peak-normalised to -1.5 dBTP (natural dynamics, just louder to audition).
 WAV 48 kHz 24-bit mono + MP3 320 kbps for every version. select_master.py then picks the primary C.

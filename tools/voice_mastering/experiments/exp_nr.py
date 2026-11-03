@@ -2,7 +2,7 @@
 import json, os, sys
 import numpy as np
 import noisereduce as nr
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from common import FILES, SR, load, save, highpass
 vm = sys.argv[1]
 V2 = os.path.join(vm, "work", "variants2")

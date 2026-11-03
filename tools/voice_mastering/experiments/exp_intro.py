@@ -1,6 +1,6 @@
 import json, os, sys
 import numpy as np
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from common import FILES, SR, load, save, highpass
 import noisereduce as nr
 from stage1_lib import apply_plan

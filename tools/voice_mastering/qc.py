@@ -3,8 +3,8 @@
 Usage: python qc.py <vm dir> <ecapa model dir> <out.json>
 
 For each section and version (original edit, A, B, C for each enhancement path):
-  ecapa      speaker-embedding cosine similarity to the original (ECAPA-TDNN, VoxCeleb; same voice
-             recorded twice typically scores 0.7-0.9, different people under 0.4)
+  ecapa      speaker-embedding cosine similarity to the original (ECAPA-TDNN, VoxCeleb; 1.0 = identical,
+             speechbrain's default same-speaker threshold is 0.25, different speakers score near 0)
   squim      no-reference estimates of STOI / PESQ / SI-SDR (torchaudio SQUIM, DNS-2020), 16 kHz band
   f0_median  median pitch of voiced frames (YIN), to confirm the voice was not shifted
   gap_db     level of the pauses relative to the loudest speech (p95 of 50 ms frames), dB
