@@ -9,6 +9,9 @@ import { ArtifactShell, GoldOutline } from './ArtifactShell';
 import { makeCanvasTexture, spacedText } from './textures';
 import { useExhibit } from './useExhibit';
 
+/** Text accent on the slate face, matches the HUD's cyan (--amber in styles.css). */
+const SLATE_ACCENT = '#36E2CF';
+
 /** Where each room's reading slate stands (front-left of the plinth, facing the visitor). */
 const SLATE_OFFSET: Partial<Record<ExhibitId, [number, number]>> = {
   samsung: [-3.05, 1.9],
@@ -34,23 +37,23 @@ export function Slate({ id }: { id: ExhibitId }) {
       makeCanvasTexture(512, 340, (ctx, w, h) => {
         ctx.fillStyle = '#1B1D22';
         ctx.fillRect(0, 0, w, h);
-        ctx.strokeStyle = C.gold;
+        ctx.strokeStyle = SLATE_ACCENT;
         ctx.lineWidth = 6;
         ctx.strokeRect(14, 14, w - 28, h - 28);
         spacedText(ctx, site.slateSign, w / 2, 62, {
           font: '700 {s}px Inter, system-ui, sans-serif',
           size: 26,
           spacing: 0.3,
-          color: C.gold,
+          color: SLATE_ACCENT,
         });
-        spacedText(ctx, ex.number, w / 2, 150, { font: '600 {s}px Fraunces, Georgia, serif', size: 96, color: C.plaster });
+        spacedText(ctx, ex.number, w / 2, 150, { font: '800 {s}px "Barlow Condensed", Arial Narrow, sans-serif', size: 110, color: '#E6EEF4' });
         spacedText(ctx, ex.chapter.split('·')[1]?.trim() ?? '', w / 2, 248, {
-          font: '500 {s}px Fraunces, Georgia, serif',
+          font: '600 {s}px "Barlow Condensed", Arial Narrow, sans-serif',
           size: 34,
-          color: C.stone,
+          color: '#8EA3B4',
           maxWidth: w - 70,
         });
-        ctx.fillStyle = 'rgba(224,184,90,0.5)';
+        ctx.fillStyle = 'rgba(54,226,207,0.5)';
         ctx.fillRect(w / 2 - 60, 290, 120, 3);
       }).tex,
     [ex],

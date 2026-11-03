@@ -16,6 +16,17 @@
 
 export type Cue = { text: string; start: number; end: number };
 
+/** Lay out cue timings from word count (2.6 words/s, 0.25 s gaps). Swap for real timings once recorded. */
+const cues = (lines: string[]): Cue[] => {
+  let t = 0.3;
+  return lines.map((text) => {
+    const d = Math.max(1.3, text.split(/\s+/).length / 2.6);
+    const c = { text, start: +t.toFixed(2), end: +(t + d).toFixed(2) };
+    t += d + 0.25;
+    return c;
+  });
+};
+
 export type ExhibitId =
   | 'lobby'
   | 'samsung'
@@ -69,7 +80,7 @@ export const site = {
   stopTourLabel: 'Stop tour',
   nextLabel: 'Next exhibit →',
   backLabel: '← Back',
-  recoveredToast: 'Artifact recovered',
+  recoveredToast: 'Artifact secured',
   lobbyNextHint: 'Next exhibit →',
   footer: 'Independent hiring-challenge application. Not an official Wispr Flow site.',
   captionLabel: 'Caption',
@@ -79,13 +90,13 @@ export const site = {
   unmuteLabel: 'Unmute',
   progressLabel: 'Recovered',
   bannerLabel: 'EXHIBIT',
-  pendingExhibitHint: 'This exhibit is still being installed.',
+  pendingExhibitHint: 'This case file is still being assembled.',
   slateLabel: 'Read the slate',
   slateSign: 'READ ME',
   readerClose: 'Close',
   readerNarration: 'Narration',
   readerEvidence: 'Evidence',
-  todoLabel: 'Coming soon',
+  todoLabel: 'Classified · coming soon',
   synthVoiceNote: 'Placeholder synthetic voice · Harsh\'s own recording replaces it',
   skipIntro: 'Skip intro',
   musicOn: 'Music on',
@@ -101,15 +112,15 @@ export const hud = {
   briefingKicker: 'After-hours job · Case file HJ-26',
   briefingTitleTop: 'The Museum of',
   briefingTitleBottom: "Things I Didn't Win",
-  briefingLine: 'Five artifacts. Five attempts that didn\'t win. Recover each one and read what it left behind.',
+  briefingLine: "Five case files. Five near-misses. Get in, secure every artifact, and find out what each one cost.",
   briefingMeta: ['Run time ≈ 3 min', 'Sound optional', 'By Harsh Jha'],
   startJob: 'Start the job',
-  startJobSub: 'Full tour with intro',
+  startJobSub: 'Full run · opening briefing',
   quickRecon: 'Quick recon',
-  quickReconSub: '90 seconds, auto-pilot',
+  quickReconSub: '90-second fly-through',
   objectiveLabel: 'Objective',
-  objectiveLine: 'Recover the 5 artifacts',
-  objectiveDone: 'All artifacts recovered. Head to the exit.',
+  objectiveLine: 'Secure all 5 artifacts',
+  objectiveDone: 'All 5 secured. Make for the exit.',
   artifacts: {
     samsung: 'Case file 01 · ASTFLOW',
     hackerrank: 'Case file 02 · Orchestrate',
@@ -126,13 +137,13 @@ export const hud = {
   promptSkip: 'Skip line',
   promptClose: 'Close file',
   speaker: 'Curator',
-  toastRecovered: 'Artifact recovered',
+  toastRecovered: 'Artifact secured',
   toastObjective: 'Objective updated',
   dossierHeader: 'Case file',
   dossierStatus: 'Status',
-  dossierStatusOpen: 'Under review',
-  dossierStatusDone: 'Recovered',
-  transmission: 'Incoming · curator',
+  dossierStatusOpen: 'Open case',
+  dossierStatusDone: 'Secured',
+  transmission: 'Incoming · the curator',
   audioOn: 'Audio',
   musicLabel: 'Music',
   stopRecon: 'Take control',
@@ -145,20 +156,20 @@ export const exhibits: Exhibit[] = [
     kicker: '00 · LOBBY',
     title: 'The Curator',
     chapter: "Prologue · The curator",
-    bridge: "Five attempts that didn't win. Each one left a lesson behind.",
-    hint: 'Welcome. The exhibits are to your right.',
+    bridge: "Five case files. Five near-misses. Every one left something behind.",
+    hint: 'The first case file is to your right.',
     counted: false,
     // Look slightly higher and wider than spec C3 so the taller atrium (ref 4) reads.
     station: { pos: [-2.6, 1.75, 5.6], target: [0.3, 1.6, -1.6], fov: 46 },
     // audio: '/audio/00-prologue.mp3',  // TODO: Harsh records
-    narration: [
-      { text: "Welcome to the Museum of Things I Didn't Win.", start: 0.3, end: 3.8 },
-      { text: "I'm Harsh: founder, curator, and unfortunately the subject of most of the exhibits.", start: 4.0, end: 9.0 },
-      { text: 'Some people collect trophies.', start: 9.3, end: 10.8 },
-      { text: 'I collect character development.', start: 11.0, end: 12.6 },
-      { text: 'Have a look around.', start: 12.8, end: 14.4 },
-    ],
-    quickLine: "A museum of attempts that didn't win, and what they taught me.",
+    narration: cues([
+      "Welcome to the Museum of Things I Didn't Win.",
+      "I'm Harsh. Founder, curator, and prime suspect in most of these exhibits.",
+      'Some people collect trophies.',
+      'I collect character development.',
+      "Five case files. Let's open them.",
+    ]),
+    quickLine: 'Five near-misses, five case files, and what each one taught me.',
     evidence: [],
     props: {
       plaque: 'PLEASE DO NOT CONFUSE CONFIDENCE WITH EVIDENCE',
@@ -169,10 +180,10 @@ export const exhibits: Exhibit[] = [
     id: 'samsung',
     number: '01',
     kicker: '01 · SAMSUNG PRISM / ASTFLOW',
-    title: 'Three friends. One idea. No qualification.',
+    title: 'Three friends. One idea. Not selected.',
     chapter: "Chapter 1 · Bruised certainty",
-    bridge: "Where it starts: a lot of effort, and a question I still ask.",
-    hint: 'Click the glowing laptop or the slate — or press Enter',
+    bridge: 'The first job. Big effort, no result, and one question that stuck.',
+    hint: 'Hit the glowing laptop or the slate, or press E',
     inspectLabel: 'Inspect',
     counted: true,
     station: {
@@ -182,21 +193,21 @@ export const exhibits: Exhibit[] = [
       pushIn: { pos: [12.8, 1.6, 2.6], target: [14, 1.3, -2.4] },
     },
     // audio: '/audio/01-samsung.mp3',  // TODO: Harsh records
-    narration: [
-      { text: 'This is ASTFLOW.', start: 0.3, end: 1.7 },
-      { text: 'Three friends, one Samsung PRISM GenAI hackathon, and an idea:', start: 1.9, end: 5.8 },
-      { text: 'help developers actually understand large JavaScript codebases', start: 6.0, end: 8.7 },
-      { text: 'instead of pasting snippets into a chatbot and hoping.', start: 9.0, end: 12.4 },
-      { text: 'I worked on the user flow and retrieval.', start: 12.7, end: 15.8 },
-      { text: 'We built it during exams, studying in one window and coding in the other.', start: 16.0, end: 21.4 },
-      { text: "We were sure we'd qualify.", start: 21.7, end: 23.6 },
-      { text: "We didn't.", start: 23.8, end: 25.2 },
-      { text: "No reason was given, so I won't invent one.", start: 25.5, end: 28.9 },
-      { text: 'But I still ask: did we validate as hard as we built?', start: 29.2, end: 33.8 },
-    ],
-    quickLine: "ASTFLOW, Samsung PRISM: built hard during exams, didn't qualify. Lesson: validate as hard as you build.",
+    narration: cues([
+      'Case file one: ASTFLOW.',
+      'Three friends. One Samsung PRISM GenAI hackathon. One idea:',
+      'make huge JavaScript codebases readable to the developers stuck inside them.',
+      'No more pasting snippets into a chatbot and praying.',
+      'My job: the user flow and the retrieval.',
+      'We built it during exams. Notes in one window, code in the other.',
+      "We were sure we'd qualify.",
+      "We didn't.",
+      "No reason was given, and I'm not going to make one up.",
+      'But one question still follows me: did we validate as hard as we built?',
+    ]),
+    quickLine: 'ASTFLOW: built through exams, not selected. Takeaway: validate as hard as you build.',
     cards: [
-      { id: 'dossier-work', label: 'Work completed', body: 'Many hours.' },
+      { id: 'dossier-work', label: 'Work completed', body: 'Many hours. Most of them during exams.' },
       { id: 'dossier-reason', label: 'Rejection reason', body: 'Not provided.' },
       { id: 'dossier-lesson', label: 'Lesson under investigation', body: 'Did we validate as hard as we built?' },
       {
@@ -228,24 +239,24 @@ export const exhibits: Exhibit[] = [
     kicker: '02 · HACKERRANK ORCHESTRATE',
     title: 'The More-is-Better Machine',
     chapter: "Chapter 2 · Over-confidence, exposed",
-    bridge: "Next: what happens when more tools start to feel like certainty.",
+    bridge: 'Next job: when more tools start to feel like a guarantee.',
     // Phase 2 restores: hint 'Flip the RUN ALL AGENTS switch — or press Enter', inspectLabel 'Run all agents'
-    hint: 'Click the glowing slate — or press Enter',
+    hint: 'Hit the glowing slate, or press E',
     inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [25.4, 1.75, 5.6], target: [28.3, 1.25, -1.6], fov: 42 },
     // audio: '/audio/02-hackerrank.mp3',  // TODO: Harsh records
-    narration: [
-      { text: 'HackerRank Orchestrate.', start: 0.3, end: 1.7 },
-      { text: 'Codex, Claude, Gemini: more AI tools than any sensible person should put in one room.', start: 1.9, end: 7.7 },
-      { text: 'I thought coordinating them all was my edge,', start: 8.0, end: 11.0 },
-      { text: 'and I was already imagining a top finish.', start: 11.3, end: 14.4 },
-      { text: 'I submitted with validation errors still on screen.', start: 14.6, end: 17.7 },
-      { text: "Then the AI interview found gaps I couldn't explain.", start: 17.9, end: 21.4 },
-      { text: "I'd confused access to powerful tools with certainty about the result.", start: 21.7, end: 25.9 },
-      { text: "More isn't automatically better.", start: 26.1, end: 27.7 },
-    ],
-    quickLine: "HackerRank Orchestrate: every AI tool at once, errors at submission. Lesson: more isn't better.",
+    narration: cues([
+      'Case file two: HackerRank Orchestrate.',
+      'Codex. Claude. Gemini. More AI in one room than any sane person should allow.',
+      'I thought running them all at once was my edge.',
+      'In my head, I was already near the top.',
+      'I hit submit with validation errors still on the screen.',
+      "Then the AI interview found gaps I couldn't explain.",
+      "I'd mistaken access to powerful tools for certainty about the result.",
+      "More isn't better. Judgment is.",
+    ]),
+    quickLine: "HackerRank Orchestrate: every AI tool at once, errors at submit. Takeaway: more isn't better.",
     cards: [
       {
         id: 'story-turn',
@@ -272,8 +283,8 @@ export const exhibits: Exhibit[] = [
     kicker: '— · SECURITY CORRIDOR',
     title: 'Mind the spotlight',
     chapter: "Interlude · Security",
-    bridge: "A short breath between stories. Mind the light.",
-    hint: 'Slip past when the light is off the path — or just walk through',
+    bridge: 'Security checkpoint. Keep to the shadows.',
+    hint: 'Wait for the light to sweep past, or just walk through',
     counted: false,
     station: { pos: [33, 1.7, 2.6], target: [40, 1.2, 0], fov: 50 },
     narration: [],
@@ -290,25 +301,25 @@ export const exhibits: Exhibit[] = [
     id: 'gsoc',
     number: '03',
     kicker: '03 · GSOC 2026 / QC-DEVS',
-    title: 'The exhibit that does not belong here',
+    title: "The one that doesn't belong here",
     chapter: "Chapter 3 · Changed judgment",
-    bridge: "Then something changed. Same tools, used differently.",
+    bridge: 'Then the plan changed. Same tools, different hands on them.',
     // Phase 2 restores: hint 'Click the glass case — or press Enter'
-    hint: 'Click the glowing slate — or press Enter',
+    hint: 'Hit the glowing slate, or press E',
     inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [45.6, 1.7, 5.4], target: [48.2, 1.25, -1.2], fov: 42 },
     // audio: '/audio/03-gsoc.mp3',  // TODO: Harsh records
-    narration: [
-      { text: 'This exhibit is technically in the wrong museum.', start: 0.3, end: 3.4 },
-      { text: 'Applying to Google Summer of Code, I worried that my real strength,', start: 3.6, end: 8.2 },
-      { text: 'coordinating AI tools, was actually a weakness.', start: 8.5, end: 11.2 },
-      { text: 'I used it anyway, but carefully this time.', start: 11.4, end: 14.5 },
-      { text: 'I was selected for GSoC 2026 with QC-Devs', start: 14.8, end: 17.8 },
-      { text: 'and spent three months learning what contributing to a real open-source project means.', start: 18.1, end: 23.1 },
-      { text: "There's no single heroic line of code here.", start: 23.3, end: 26.4 },
-      { text: 'Same tools. Different judgment.', start: 26.7, end: 28.2 },
-    ],
+    narration: cues([
+      "Case file three. This one's technically in the wrong museum.",
+      'Applying to Google Summer of Code, I was scared my real strength,',
+      'coordinating AI tools, would look like a weakness.',
+      'I used it anyway. Carefully, this time.',
+      'Selected: GSoC 2026, with QC-Devs.',
+      'Three months learning what contributing to real open source actually means.',
+      'No single heroic line of code here.',
+      'Same tools. Better judgment.',
+    ]),
     quickLine: 'GSoC 2026 with QC-Devs: same tools, used with judgment. Selected.',
     cards: [
       {
@@ -343,22 +354,22 @@ export const exhibits: Exhibit[] = [
     kicker: '04 · THE DEADLINE PARADOX',
     title: 'Five days, one brain',
     chapter: "Chapter 4 · Self-awareness",
-    bridge: "The flaw underneath all of it, and the rule that fixes it.",
+    bridge: 'The flaw under every file, and the rule that patched it.',
     // Phase 3 restores: hint 'Drag the clock hand from 1 to 5 — or press Watch animation', inspectLabel 'Watch animation'
-    hint: 'Click the glowing slate — or press Enter',
+    hint: 'Hit the glowing slate, or press E',
     inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [60, 1.9, 5.6], target: [62.2, 1.9, -2.4], fov: 46 },
     // audio: '/audio/04-deadline.mp3',  // TODO: Harsh records
-    narration: [
-      { text: 'The least flattering room.', start: 0.3, end: 1.8 },
-      { text: 'Give me five days and I used to spend three thinking I had plenty of time,', start: 2.1, end: 8.2 },
-      { text: 'then cut features, then obsess over every detail on the last night.', start: 8.5, end: 13.1 },
-      { text: 'So I changed one rule: what must be finished today gets finished today.', start: 13.4, end: 18.4 },
-      { text: "Hours don't count; done does.", start: 18.6, end: 20.5 },
-      { text: 'And yes, I see the irony of saying this in a time-limited hiring challenge.', start: 20.8, end: 26.2 },
-    ],
-    quickLine: 'The deadline paradox, and the daily rule that fixes it.',
+    narration: cues([
+      'Case file four. The least flattering room in the building.',
+      'Give me five days, and I used to spend three thinking I had loads of time,',
+      'then cut features, then obsess over every detail on the last night.',
+      'So I changed one rule: what has to be finished today gets finished today.',
+      "Hours don't count. Done does.",
+      'And yes, I see the irony of saying this in a timed hiring challenge.',
+    ]),
+    quickLine: 'The deadline paradox, and the one daily rule that patched it.',
     cards: [
       {
         id: 'checklist',
@@ -382,9 +393,9 @@ export const exhibits: Exhibit[] = [
     kicker: '05 · THE VAULT',
     title: 'The unfinished exhibit',
     chapter: "Chapter 5 · Constructive risk",
-    bridge: "And the newest attempt: the one you are standing in.",
+    bridge: "Last file. The one you're standing in.",
     // Phase 3 restores: hint 'Open the vault door — or press Enter', inspectLabel 'Open vault'
-    hint: 'Click the glowing slate — or press Enter',
+    hint: 'Hit the glowing slate, or press E',
     inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [73.2, 1.8, 5.8], target: [76.4, 1.7, -2.2], fov: 44 },
@@ -392,17 +403,16 @@ export const exhibits: Exhibit[] = [
     // Narration follows experiment.status (spec I3). While the test is `not_launched`,
     // the "ran a small voice test" sentence is removed. When results exist, add
     // ONE verified result + ONE honest learning (max 25 words) after "So I built this museum by voice".
-    narration: [
-      { text: "And this is the newest exhibit. You're standing inside it.", start: 0.3, end: 4.1 },
-      { text: "I'm a computer science student applying to a growth team.", start: 4.4, end: 8.2 },
-      { text: 'What I like about Wispr is simple:', start: 8.5, end: 11.2 },
-      { text: 'I say a messy thought out loud and get usable text back.', start: 11.4, end: 16.0 },
-      { text: 'My edge in growth is that I can build the experiment, not just suggest it.', start: 16.3, end: 22.1 },
-      { text: 'So I built this museum by voice.', start: 22.3, end: 25.0 },
-      { text: "I don't know how this application ends.", start: 25.3, end: 28.0 },
-      { text: "This museum has no ending yet. That's why I'm applying.", start: 28.2, end: 32.0 },
-    ],
-    quickLine: 'The newest exhibit: this museum, and a live voice test with students.',
+    narration: cues([
+      "Case file five. The newest exhibit. You're standing inside it.",
+      "I'm a computer science student, applying to a growth team.",
+      "Here's what I like about Wispr: I say a messy thought out loud and get usable text back.",
+      "My edge in growth: I don't just suggest the experiment. I build it.",
+      'So I built this museum by voice.',
+      "I don't know how this application ends.",
+      "This museum has no ending yet. That's why I'm applying.",
+    ]),
+    quickLine: 'The final file: this museum, built by voice.',
     cards: [
       { id: 'build-proof', label: 'Built by voice', body: 'This museum was built by speaking.' },
       { id: 'setup', label: 'Gift shop · $3,000 setup', body: 'TODO' },
@@ -440,13 +450,13 @@ export const experiment: {
  * in src/scene/cutscenePath.ts (same order).
  */
 export const cutscene: { kicker?: string; line: string; duration: number }[] = [
-  { kicker: 'After hours', line: "Welcome to the Museum of Things I Didn't Win.", duration: 5 },
-  { line: 'Most museums keep their trophies on display.', duration: 4.2 },
-  { line: "This one keeps the attempts: the hackathons and bets that didn't win.", duration: 5.2 },
-  { kicker: 'The curator', line: "I'm Harsh Jha, a computer science student at VIT Vellore.", duration: 5 },
-  { line: "Still hasn't learned to play it safe.", duration: 4 },
-  { line: 'Five exhibits. Each one holds a decision, a mistake and a lesson.', duration: 5 },
-  { kicker: 'House rule', line: 'Confidence is not evidence. So let me show you the evidence.', duration: 5 },
+  { kicker: 'After hours', line: "Lights down. Doors locked. Welcome to the Museum of Things I Didn't Win.", duration: 5.4 },
+  { line: 'Other museums guard their trophies.', duration: 3.8 },
+  { line: "This one guards the near-misses: hackathons, bets and plans that didn't land.", duration: 5.4 },
+  { kicker: 'The curator', line: 'Harsh Jha. Computer science student, VIT Vellore.', duration: 4.6 },
+  { line: "Known risk. Still hasn't learned to play it safe.", duration: 4 },
+  { line: 'Five case files. Each one: a call I made, what broke, and what I kept.', duration: 5.2 },
+  { kicker: 'House rule', line: 'Confidence is not evidence. So tonight, we go get the evidence.', duration: 5.2 },
 ];
 
 export const exitPanel = {
