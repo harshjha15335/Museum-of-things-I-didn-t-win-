@@ -1378,7 +1378,7 @@ body:has(.m2d) {
 }
 .briefing-inner {
   width: min(680px, 86vw);
-  top: 37%;
+  top: 34%;
 }
 .briefing-title {
   font-size: clamp(40px, 5vw, 70px);

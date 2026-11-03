@@ -71,7 +71,7 @@ export type Exhibit = {
 };
 
 export const site = {
-  title: "The Museum of Things I Didn't Win",
+  title: 'The Harsh Jha Museum of Near Misses',
   subtitle: 'A playable application by Harsh Jha · about 3 minutes · sound optional',
   tagline:
     "An exhibition of bad predictions, ambitious attempts, and one applicant who still hasn't learned to play it safe.",
@@ -110,12 +110,12 @@ export const site = {
 /** Heist-thriller HUD copy (UI rebuild, 3 Nov). Game voice; story facts stay in `exhibits`. */
 export const hud = {
   briefingKicker: 'After-hours job · Case file HJ-26',
-  briefingTitleTop: 'The Museum of',
-  briefingTitleBottom: "Things I Didn't Win",
+  briefingTitleTop: 'The Harsh Jha Museum',
+  briefingTitleBottom: 'of Near Misses',
   /** The 5-second hook: what this is, who made it, why it exists. */
   briefingHook: 'A job application you can walk through.',
   briefingLine:
-    "Harsh Jha's near-misses, turned into a playable after-hours museum for the Wispr Flow growth challenge, and built by voice with Wispr Flow. The best part is locked in the vault.",
+    "The hackathons and bets that almost worked, turned into a playable after-hours museum for the Wispr Flow growth challenge, and built by voice with Wispr Flow. The best part is locked in the vault.",
   briefingMeta: ['Full run ≈ 3 min', 'Quick recon ≈ 90 s', 'Sound optional'],
   startJob: 'Start the job',
   startJobSub: 'Full run · opening briefing',
@@ -166,7 +166,7 @@ export const exhibits: Exhibit[] = [
     station: { pos: [-2.6, 1.75, 5.6], target: [0.3, 1.6, -1.6], fov: 46 },
     // audio: '/audio/00-prologue.mp3',  // TODO: Harsh records
     narration: cues([
-      "Welcome to the Museum of Things I Didn't Win.",
+      'Welcome to the Museum of Near Misses.',
       "I'm Harsh. Founder, curator, and prime suspect in most of these exhibits.",
       'Some people collect trophies.',
       'I collect character development.',
@@ -176,7 +176,7 @@ export const exhibits: Exhibit[] = [
     evidence: [],
     props: {
       plaque: 'PLEASE DO NOT CONFUSE CONFIDENCE WITH EVIDENCE',
-      band: "THE MUSEUM OF THINGS I DIDN'T WIN",
+      band: 'THE HARSH JHA MUSEUM OF NEAR MISSES',
     },
   },
   {
@@ -461,7 +461,7 @@ export const experiment: {
  * in src/scene/cutscenePath.ts (same order).
  */
 export const cutscene: { kicker?: string; line: string; duration: number }[] = [
-  { kicker: 'After hours', line: "Lights down. Doors locked. Welcome to the Museum of Things I Didn't Win.", duration: 5.4 },
+  { kicker: 'After hours', line: 'Lights down. Doors locked. Welcome to the Harsh Jha Museum of Near Misses.', duration: 5.4 },
   { line: 'Other museums guard their trophies.', duration: 3.8 },
   { line: "This one guards the near-misses: hackathons, bets and plans that didn't land.", duration: 5.4 },
   { kicker: 'The curator', line: 'Harsh Jha. Computer science student, VIT Vellore.', duration: 4.6 },
@@ -488,7 +488,7 @@ export const exitDesk = {
   ],
   hire: 'Hire the curator',
   share: 'Share this museum',
-  shareText: "I walked through Harsh Jha's Museum of Things I Didn't Win, built by voice with Wispr Flow.",
+  shareText: "I walked through The Harsh Jha Museum of Near Misses, built by voice with Wispr Flow.",
 };
 
 export const exitPanel = {

@@ -1,4 +1,4 @@
-# The Museum of Things I Didn't Win
+# The Harsh Jha Museum of Near Misses
 
 A playable, voice-narrated, 3D-on-rails museum that tells Harsh Jha's story through the attempts that didn't win.
 Built for the Wispr Flow India growth hiring challenge. Independent application, not an official Wispr Flow site.
