@@ -3,7 +3,7 @@ import { hud } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { startMusic } from '../audio/music';
 
-/** Job-briefing title screen with a vertical game menu. */
+/** Home screen: one big title, one line, two buttons (Harsh, 3 Nov: "big and clear, not a lot of text"). */
 export function StartScreen() {
   const started = useMuseum((s) => s.started);
   const [gone, setGone] = useState(false);
@@ -20,7 +20,7 @@ export function StartScreen() {
   useEffect(() => {
     if (started) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         setSel((v) => (v === 0 ? 1 : 0));
       }
@@ -30,43 +30,35 @@ export function StartScreen() {
   }, [started]);
   if (gone) return null;
   const items = [
-    { label: hud.startJob, sub: hud.startJobSub, mode: 'full' as const },
-    { label: hud.quickRecon, sub: hud.quickReconSub, mode: 'quick' as const },
+    { label: hud.homeEnter, mode: 'full' as const },
+    { label: hud.homeQuick, mode: 'quick' as const },
   ];
+  const rows = hud.homeTitle;
   return (
-    <div className={`briefing ${started ? 'leaving' : ''}`}>
-      <div className="briefing-scrim" />
-      <div className="briefing-inner">
-        <div className="hud-label">
-          <span className="hud-blip" /> {hud.briefingKicker}
-        </div>
-        <h1 className="briefing-title">
-          <span>{hud.briefingTitleTop}</span>
-          <span className="accent">{hud.briefingTitleBottom}</span>
-        </h1>
-        <p className="briefing-hook">{hud.briefingHook}</p>
-        <p className="briefing-line">{hud.briefingLine}</p>
-        <ul className="menu" role="menu">
-          {items.map((it, i) => (
-            <li key={it.mode}>
-              <button
-                role="menuitem"
-                className={`menu-item ${sel === i ? 'sel' : ''}`}
-                autoFocus={i === 0}
-                onMouseEnter={() => setSel(i)}
-                onFocus={() => setSel(i)}
-                onClick={() => start(it.mode)}
-              >
-                <span className="menu-caret">{sel === i ? '▸' : ''}</span>
-                <span className="menu-label">{it.label}</span>
-                <span className="menu-sub">{it.sub}</span>
-              </button>
-            </li>
+    <div className={`briefing home ${started ? 'leaving' : ''}`}>
+      <div className="home-scrim" />
+      <div className="home-inner">
+        <h1 className="home-title" aria-label={rows.join(' ')}>
+          {rows.map((r, i) => (
+            <span key={r} className={i === rows.length - 1 ? 'accent' : ''} style={{ animationDelay: `${150 + i * 160}ms` }}>
+              {r}
+            </span>
           ))}
-        </ul>
-        <div className="briefing-meta">
-          {hud.briefingMeta.map((m) => (
-            <span key={m}>{m}</span>
+        </h1>
+        <p className="home-hook">{hud.briefingHook}</p>
+        <div className="home-actions" role="menu">
+          {items.map((it, i) => (
+            <button
+              key={it.mode}
+              role="menuitem"
+              className={`home-btn ${i === 0 ? 'primary' : ''} ${sel === i ? 'sel' : ''}`}
+              autoFocus={i === 0}
+              onMouseEnter={() => setSel(i)}
+              onFocus={() => setSel(i)}
+              onClick={() => start(it.mode)}
+            >
+              {it.label}
+            </button>
           ))}
         </div>
       </div>

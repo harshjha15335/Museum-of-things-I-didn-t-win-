@@ -112,6 +112,10 @@ export const hud = {
   briefingKicker: 'After-hours job · Case file HJ-26',
   briefingTitleTop: 'The Harsh Jha Museum',
   briefingTitleBottom: 'of Near Misses',
+  /** Home screen title, one line per row (last row in gold). */
+  homeTitle: ['The Harsh Jha', 'Museum of', 'Near Misses'],
+  homeEnter: 'Enter the museum',
+  homeQuick: 'Quick tour · 90 s',
   /** The 5-second hook: what this is, who made it, why it exists. */
   briefingHook: 'A job application you can walk through.',
   briefingLine:
