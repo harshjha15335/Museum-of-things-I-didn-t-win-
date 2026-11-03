@@ -1,7 +1,8 @@
 import { useMemo, useRef } from 'react';
+import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { exhibits, site, type ExhibitId } from '../content/exhibits';
+import { exhibits, hud, site, type ExhibitId } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { C, EXHIBIT_POS } from './palette';
 import { ArtifactShell, GoldOutline } from './ArtifactShell';
@@ -94,6 +95,14 @@ export function Slate({ id }: { id: ExhibitId }) {
           </mesh>
         </group>
       </ArtifactShell>
+      {/* in-world key prompt */}
+      {canRead && (
+        <Html position={[0, 1.62, 0]} center zIndexRange={[3, 0]} className="world-prompt-wrap">
+          <button className="world-prompt" onClick={() => useMuseum.getState().openReader()}>
+            <kbd className="key">E</kbd> {id === 'samsung' && phase === 'idle' ? hud.promptInspect : hud.promptRead}
+          </button>
+        </Html>
+      )}
       {/* soft glow pool on the floor so the slate reads as interactive */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.34, 0.6, 48]} />

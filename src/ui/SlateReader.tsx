@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { exhibits, site } from '../content/exhibits';
+import { exhibits, hud, site } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { Dossier } from './Dossier';
 
@@ -37,9 +37,14 @@ export function SlateReader() {
     <aside className="reader" aria-label={`${ex.kicker} slate`}>
       <header className="reader-head">
         <div>
-          <div className="kicker">{ex.kicker}</div>
+          <div className="hud-label">
+            <span className="hud-blip" /> {hud.dossierHeader} {ex.number} // {ex.kicker.split('·')[1]?.trim()}
+          </div>
           <div className="reader-chapter">{ex.chapter}</div>
         </div>
+        <span className={`reader-status ${phase === 'recovered' ? 'done' : ''}`}>
+          {phase === 'recovered' ? hud.dossierStatusDone : hud.dossierStatusOpen}
+        </span>
         <button className="icon-btn" aria-label={site.readerClose} title={`${site.readerClose} (Esc)`} onClick={() => useMuseum.getState().closeReader()}>
           ✕
         </button>

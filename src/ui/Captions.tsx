@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import { site } from '../content/exhibits';
+import { hud } from '../content/exhibits';
 import { useMuseum } from '../state/store';
-import { narrator } from '../audio/narration';
 
-/** Bottom caption strip (spec C6/C7). Fades out when narration ends; never says "end of narration". */
+/** Game-style subtitles: speaker tag + line, no box. Fade out when narration ends. */
 export function Captions() {
   const caption = useMuseum((s) => s.caption);
   const narrating = useMuseum((s) => s.narrating);
-  const mode = useMuseum((s) => s.mode);
-  const hidden = useMuseum((s) => s.readerOpen || s.cutscene);
+  const hidden = useMuseum((s) => s.cutscene || s.readerOpen);
   const [last, setLast] = useState(caption);
   useEffect(() => {
     if (caption) setLast(caption);
@@ -16,21 +14,10 @@ export function Captions() {
   const shown = caption ?? (narrating ? last : null);
   const visible = !!shown && !hidden;
   return (
-    <div className={`captions ${visible ? 'on' : ''}`} aria-hidden={!visible}>
-      <span className="caption-label">{site.captionLabel.toUpperCase()}</span>
-      <p className="caption-text" key={(shown ?? last)?.key} aria-live="polite">
-        {(shown ?? last)?.text}
+    <div className={`subs ${visible ? 'on' : ''}`} aria-hidden={!visible}>
+      <p className="subs-line" key={(shown ?? last)?.key} aria-live="polite">
+        <span className="subs-speaker">{hud.speaker}:</span> {(shown ?? last)?.text}
       </p>
-      {mode === 'full' && (
-        <span className="caption-ctrls">
-          <button className="icon-btn" title={`${site.replayLabel} (R)`} aria-label={site.replayLabel} tabIndex={visible ? 0 : -1} onClick={() => useMuseum.getState().replay()}>
-            ↺
-          </button>
-          <button className="icon-btn" title={`${site.skipLabel} (S)`} aria-label={site.skipLabel} tabIndex={visible ? 0 : -1} onClick={() => narrator.skip()}>
-            ⏭
-          </button>
-        </span>
-      )}
     </div>
   );
 }

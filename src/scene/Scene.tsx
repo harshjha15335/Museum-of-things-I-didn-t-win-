@@ -6,7 +6,6 @@ import { useMuseum } from '../state/store';
 import { Hall, HallLights } from './Hall';
 import { CameraRig } from './CameraRig';
 import { Spot } from './Spot';
-import { Projector } from './Projector';
 import { C, EXHIBIT_POS } from './palette';
 import { Lobby } from './exhibits/Lobby';
 import { Samsung } from './exhibits/Samsung';
@@ -91,7 +90,6 @@ export function Scene() {
         <Slate key={id} id={id} />
       ))}
       <CameraRig />
-      <Projector />
       <PerfMonitor />
     </Canvas>
   );

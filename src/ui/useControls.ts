@@ -26,6 +26,14 @@ export function useControls() {
       } else if ((e.key === 'Enter' || e.key === ' ') && !onButton) {
         e.preventDefault();
         if (s.mode === 'full') s.inspect();
+      } else if ((e.key === 'e' || e.key === 'E') && !e.metaKey && !e.ctrlKey) {
+        if (s.mode !== 'full') return;
+        if (s.readerOpen) s.closeReader();
+        else s.openReader();
+      } else if (e.key === 'b' || e.key === 'B') {
+        s.toggleMusic();
+      } else if (e.key === 'Escape' && s.mode === 'quick') {
+        s.stopTour();
       } else if (e.key === 'M' && e.shiftKey) {
         s.toggleMute();
       } else if (e.key === 'r' || e.key === 'R') {

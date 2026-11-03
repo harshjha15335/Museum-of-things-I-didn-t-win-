@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { Scene } from './scene/Scene';
-import { TopBar } from './ui/TopBar';
-import { Plaque } from './ui/Plaque';
+import { Hud } from './ui/Hud';
+import { LocationCard } from './ui/LocationCard';
+import { ActionBar } from './ui/ActionBar';
 import { Captions } from './ui/Captions';
-import { NextButton } from './ui/NextButton';
 import { Footer } from './ui/Footer';
 import { Toast } from './ui/Toast';
 import { StartScreen } from './ui/StartScreen';
@@ -38,11 +38,11 @@ export default function App() {
         <Scene />
       </div>
       <div className="overlay">
-        {started && <TopBar />}
-        <Plaque />
+        {started && <Hud />}
+        <LocationCard />
         <SlateReader />
         <Captions />
-        <NextButton />
+        <ActionBar />
         <Toast />
         <StartScreen />
         <Cutscene />

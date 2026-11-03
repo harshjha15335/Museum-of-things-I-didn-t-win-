@@ -96,6 +96,48 @@ export const site = {
   closingLine: "This museum has no ending yet. That's why I'm applying.",
 };
 
+/** Heist-thriller HUD copy (UI rebuild, 3 Nov). Game voice; story facts stay in `exhibits`. */
+export const hud = {
+  briefingKicker: 'After-hours job · Case file HJ-26',
+  briefingTitleTop: 'The Museum of',
+  briefingTitleBottom: "Things I Didn't Win",
+  briefingLine: 'Five artifacts. Five attempts that didn\'t win. Recover each one and read what it left behind.',
+  briefingMeta: ['Run time ≈ 3 min', 'Sound optional', 'By Harsh Jha'],
+  startJob: 'Start the job',
+  startJobSub: 'Full tour with intro',
+  quickRecon: 'Quick recon',
+  quickReconSub: '90 seconds, auto-pilot',
+  objectiveLabel: 'Objective',
+  objectiveLine: 'Recover the 5 artifacts',
+  objectiveDone: 'All artifacts recovered. Head to the exit.',
+  artifacts: {
+    samsung: 'Case file 01 · ASTFLOW',
+    hackerrank: 'Case file 02 · Orchestrate',
+    gsoc: 'Case file 03 · GSoC',
+    deadline: 'Case file 04 · Deadline',
+    vault: 'Case file 05 · The vault',
+  } as Record<string, string>,
+  locationLabel: 'Location',
+  promptRead: 'Read slate',
+  promptInspect: 'Inspect',
+  promptNext: 'Next room',
+  promptBack: 'Back',
+  promptReplay: 'Replay',
+  promptSkip: 'Skip line',
+  promptClose: 'Close file',
+  speaker: 'Curator',
+  toastRecovered: 'Artifact recovered',
+  toastObjective: 'Objective updated',
+  dossierHeader: 'Case file',
+  dossierStatus: 'Status',
+  dossierStatusOpen: 'Under review',
+  dossierStatusDone: 'Recovered',
+  transmission: 'Incoming · curator',
+  audioOn: 'Audio',
+  musicLabel: 'Music',
+  stopRecon: 'Take control',
+};
+
 export const exhibits: Exhibit[] = [
   {
     id: 'lobby',
