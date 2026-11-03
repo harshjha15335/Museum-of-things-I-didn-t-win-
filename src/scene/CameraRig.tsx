@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
-import { exhibits, type Exhibit } from '../content/exhibits';
+import { cutscene, exhibits, type Exhibit } from '../content/exhibits';
+import { CUTSCENE_KEYS } from './cutscenePath';
 import { useMuseum } from '../state/store';
 
 /**
@@ -116,7 +117,60 @@ export function CameraRig() {
       });
     };
 
+    const playCutscene = () => {
+      tween.current?.kill();
+      const k0 = CUTSCENE_KEYS[0];
+      pos.current.set(...k0.pos);
+      target.current.set(...k0.target);
+      fov.current = k0.fov;
+      const tl = gsap.timeline();
+      cutscene.forEach((shot, i) => {
+        const a = CUTSCENE_KEYS[i];
+        const b = CUTSCENE_KEYS[Math.min(i + 1, CUTSCENE_KEYS.length - 1)];
+        const p = { t: 0 };
+        const A = { pos: v(a.pos), target: v(a.target) };
+        const B = { pos: v(b.pos), target: v(b.target) };
+        const reduced = useMuseum.getState().reducedMotion;
+        tl.to(p, {
+          t: 1,
+          duration: shot.duration,
+          ease: 'sine.inOut',
+          onStart: () => {
+            if (reduced) {
+              pos.current.copy(B.pos);
+              target.current.copy(B.target);
+              fov.current = b.fov;
+            }
+          },
+          onUpdate: () => {
+            if (reduced) return;
+            pos.current.lerpVectors(A.pos, B.pos, p.t);
+            target.current.lerpVectors(A.target, B.target, p.t);
+            fov.current = a.fov + (b.fov - a.fov) * p.t;
+          },
+        });
+      });
+      tween.current = tl;
+    };
+
+    const endCutscene = () => {
+      tween.current?.kill();
+      const el = fade();
+      const view = stationView(exhibits[useMuseum.getState().station], false);
+      const tl = gsap.timeline();
+      if (el) tl.to(el, { opacity: 1, duration: 0.35, ease: 'none' });
+      tl.call(() => {
+        pos.current.copy(view.pos);
+        target.current.copy(view.target);
+        fov.current = view.fov;
+      });
+      if (el) tl.to(el, { opacity: 0, duration: 0.6, ease: 'none' });
+      tween.current = tl;
+    };
+
     const unsub = useMuseum.subscribe((s, prev) => {
+      if (s.cutscene && !prev.cutscene) return playCutscene();
+      if (!s.cutscene && prev.cutscene) return endCutscene();
       if (s.station !== prev.station) {
         go(exhibits[s.station], false, 'travel');
       } else if (s.pushedIn !== prev.pushedIn && !s.traveling) {
@@ -132,12 +186,13 @@ export function CameraRig() {
   useFrame(({ clock }) => {
     const s = useMuseum.getState();
     const calm = s.reducedMotion;
-    const idle = !s.traveling && !calm;
+    const idle = !s.traveling && !calm && !s.cutscene;
     const drift = idle ? Math.sin((clock.elapsedTime / 6) * Math.PI * 2) * 0.03 : 0;
 
     // Pointer parallax: nudge the look target up to ±0.25 m x / ±0.12 m y, lerp 0.05/frame.
-    const px = calm ? 0 : pointer.current.x * 0.25;
-    const py = calm ? 0 : -pointer.current.y * 0.12;
+    const still = calm || s.cutscene;
+    const px = still ? 0 : pointer.current.x * 0.25;
+    const py = still ? 0 : -pointer.current.y * 0.12;
     parallax.current.x += (px - parallax.current.x) * 0.05;
     parallax.current.y += (py - parallax.current.y) * 0.05;
 

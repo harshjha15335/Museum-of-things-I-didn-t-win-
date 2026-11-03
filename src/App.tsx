@@ -7,6 +7,8 @@ import { NextButton } from './ui/NextButton';
 import { Footer } from './ui/Footer';
 import { Toast } from './ui/Toast';
 import { StartScreen } from './ui/StartScreen';
+import { Cutscene } from './ui/Cutscene';
+import { SlateReader } from './ui/SlateReader';
 import { useControls } from './ui/useControls';
 import { Museum2D } from './fallback/Museum2D';
 import { useMuseum } from './state/store';
@@ -38,10 +40,12 @@ export default function App() {
       <div className="overlay">
         {started && <TopBar />}
         <Plaque />
+        <SlateReader />
         <Captions />
         <NextButton />
         <Toast />
         <StartScreen />
+        <Cutscene />
         <Footer />
       </div>
       <div id="fade-cut" aria-hidden />

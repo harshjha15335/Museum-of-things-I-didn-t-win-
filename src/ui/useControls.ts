@@ -13,7 +13,7 @@ export function useControls() {
 
     const onKey = (e: KeyboardEvent) => {
       const s = S();
-      if (!s.started) return;
+      if (!s.started || s.cutscene) return;
       const onButton = (e.target as HTMLElement)?.closest?.('button, a, input, textarea');
       if (e.key === 'ArrowRight' || e.key === 'PageDown') {
         e.preventDefault();
@@ -37,7 +37,9 @@ export function useControls() {
 
     const onWheel = (e: WheelEvent) => {
       const s = S();
-      if (!s.started || Math.abs(e.deltaY) < 4) return;
+      if (!s.started || s.cutscene || Math.abs(e.deltaY) < 4) return;
+      // let the reading panel scroll normally
+      if ((e.target as HTMLElement)?.closest?.('.reader')) return;
       const now = performance.now();
       if (s.traveling || now - lastWheel < 900) {
         lastWheel = now; // keep swallowing the same inertial gesture
@@ -57,7 +59,7 @@ export function useControls() {
     };
     const onTouchEnd = (e: TouchEvent) => {
       const s = S();
-      if (!s.started) return;
+      if (!s.started || s.cutscene) return;
       const dx = e.changedTouches[0].clientX - tx;
       const dy = e.changedTouches[0].clientY - ty;
       if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {

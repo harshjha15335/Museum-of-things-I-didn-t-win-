@@ -3,7 +3,6 @@ import { exhibits, site } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { useLayout } from '../scene/anchors';
 import { BUILT } from '../scene/built';
-import { Dossier } from './Dossier';
 
 const COL_W = 340;
 const MARGIN = 24;
@@ -21,6 +20,8 @@ export function Plaque() {
   const mode = useMuseum((s) => s.mode);
   const phase = useMuseum((s) => s.phase[exhibits[s.station].id]);
   const narrating = useMuseum((s) => s.narrating);
+  const cutsceneOn = useMuseum((s) => s.cutscene);
+  const readerOpen = useMuseum((s) => s.readerOpen);
   const rect = useLayout((s) => s.rect);
   const col = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ left: 0, top: 0 });
@@ -46,29 +47,37 @@ export function Plaque() {
     setPos((p) => (Math.abs(p.left - left) + Math.abs(p.top - top) > 2 ? { left, top } : p));
   });
 
-  if (!started || traveling) return null;
+  if (!started || traveling || cutsceneOn || readerOpen) return null;
   const ex = exhibits[station];
-  const built = BUILT.has(ex.id);
+  const playable = ex.id !== 'corridor' || BUILT.has(ex.id);
   const quick = mode === 'quick';
-  let hint = built ? ex.hint : site.pendingExhibitHint;
+  let hint = playable ? ex.hint : site.pendingExhibitHint;
   if (ex.id === 'lobby' && phase === 'recovered') hint = site.lobbyNextHint;
   if (ex.id !== 'lobby' && phase !== 'idle') hint = '';
   if (quick) hint = '';
 
-  const showInspect = built && !quick && phase === 'idle' && !!ex.inspectLabel;
-  const showReplay = built && !quick && phase === 'recovered' && !narrating && ex.narration.length > 0;
+  const showInspect = playable && !quick && phase === 'idle' && !!ex.inspectLabel;
+  const showReplay = playable && !quick && phase === 'recovered' && !narrating && ex.narration.length > 0;
+  const showRead = playable && !quick && phase !== 'idle' && ex.id !== 'lobby';
 
   return (
     <div className="plaque-col" ref={col} style={{ left: pos.left, top: pos.top, width: COL_W }} key={station}>
       <section className="plaque" aria-live="polite">
         <div className="kicker">{ex.kicker}</div>
+        <div className="plaque-chapter">{ex.chapter}</div>
         <h2 className="plaque-title">{ex.title}</h2>
+        {!quick && phase === 'idle' && <p className="plaque-bridge">{ex.bridge}</p>}
         {hint && <p className="plaque-hint">{hint}</p>}
-        {(showInspect || showReplay) && (
+        {(showInspect || showReplay || showRead) && (
           <div className="plaque-actions">
             {showInspect && (
               <button className="ui-btn gold" onClick={() => useMuseum.getState().inspect()}>
                 {ex.inspectLabel}
+              </button>
+            )}
+            {showRead && (
+              <button className="ui-btn gold" onClick={() => useMuseum.getState().openReader()}>
+                {site.slateLabel}
               </button>
             )}
             {showReplay && (
@@ -79,7 +88,6 @@ export function Plaque() {
           </div>
         )}
       </section>
-      {ex.id === 'samsung' && !quick && <Dossier />}
     </div>
   );
 }

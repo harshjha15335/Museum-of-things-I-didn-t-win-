@@ -8,6 +8,7 @@ export function NextButton() {
   const station = useMuseum((s) => s.station);
   const nextPulse = useMuseum((s) => s.nextPulse);
   const mode = useMuseum((s) => s.mode);
+  const cutsceneOn = useMuseum((s) => s.cutscene);
   const [pulse, setPulse] = useState(false);
   useEffect(() => {
     if (!nextPulse) return;
@@ -15,7 +16,7 @@ export function NextButton() {
     const id = window.setTimeout(() => setPulse(false), 1200);
     return () => window.clearTimeout(id);
   }, [nextPulse]);
-  if (!started || traveling || mode === 'quick') return null;
+  if (!started || traveling || mode === 'quick' || cutsceneOn) return null;
   const last = station === exhibits.length - 1;
   return (
     <nav className="nextnav">

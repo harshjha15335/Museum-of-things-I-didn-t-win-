@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { site } from '../content/exhibits';
 import { useMuseum } from '../state/store';
+import { startMusic } from '../audio/music';
 
 /** Lobby start screen (spec C8): title, subtitle, ENTER MUSEUM (gold) and QUICK TOUR (outline). */
 export function StartScreen() {
@@ -12,7 +13,10 @@ export function StartScreen() {
     return () => window.clearTimeout(id);
   }, [started]);
   if (gone) return null;
-  const start = (mode: 'full' | 'quick') => useMuseum.getState().start(mode);
+  const start = (mode: 'full' | 'quick') => {
+    startMusic(); // first user gesture unlocks audio
+    useMuseum.getState().start(mode);
+  };
   return (
     <div className={`start ${started ? 'leaving' : ''}`}>
       <h1 className="start-title">{site.title}</h1>

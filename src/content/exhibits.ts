@@ -42,6 +42,10 @@ export type Exhibit = {
   number: string; // '00'..'05', '—' for corridor
   kicker: string; // '01 · SAMSUNG PRISM / ASTFLOW'
   title: string; // plaque serif title
+  /** Story chapter label (from the spec's emotional arc, Part B2). */
+  chapter: string;
+  /** One line shown on arrival that ties this room to the story so far. */
+  bridge: string;
   hint: string; // 'Click the glowing laptop — or press Enter'
   inspectLabel?: string; // HTML button equivalent of the 3D artifact (spec F5)
   counted: boolean; // false for lobby & corridor
@@ -76,6 +80,17 @@ export const site = {
   progressLabel: 'Recovered',
   bannerLabel: 'EXHIBIT',
   pendingExhibitHint: 'This exhibit is still being installed.',
+  slateLabel: 'Read the slate',
+  slateSign: 'READ ME',
+  readerClose: 'Close',
+  readerNarration: 'Narration',
+  readerEvidence: 'Evidence',
+  todoLabel: 'Coming soon',
+  synthVoiceNote: 'Placeholder synthetic voice · Harsh\'s own recording replaces it',
+  skipIntro: 'Skip intro',
+  musicOn: 'Music on',
+  musicOff: 'Music off',
+  pathLabel: 'Story path',
   noWebGL:
     'You are viewing the text edition of the museum. The illustrated phone version is still being installed.',
   closingLine: "This museum has no ending yet. That's why I'm applying.",
@@ -87,6 +102,8 @@ export const exhibits: Exhibit[] = [
     number: '00',
     kicker: '00 · LOBBY',
     title: 'The Curator',
+    chapter: "Prologue · The curator",
+    bridge: "Five attempts that didn't win. Each one left a lesson behind.",
     hint: 'Welcome. The exhibits are to your right.',
     counted: false,
     // Look slightly higher and wider than spec C3 so the taller atrium (ref 4) reads.
@@ -111,7 +128,9 @@ export const exhibits: Exhibit[] = [
     number: '01',
     kicker: '01 · SAMSUNG PRISM / ASTFLOW',
     title: 'Three friends. One idea. No qualification.',
-    hint: 'Click the glowing laptop — or press Enter',
+    chapter: "Chapter 1 · Bruised certainty",
+    bridge: "Where it starts: a lot of effort, and a question I still ask.",
+    hint: 'Click the glowing laptop or the slate — or press Enter',
     inspectLabel: 'Inspect',
     counted: true,
     station: {
@@ -166,8 +185,11 @@ export const exhibits: Exhibit[] = [
     number: '02',
     kicker: '02 · HACKERRANK ORCHESTRATE',
     title: 'The More-is-Better Machine',
-    hint: 'Flip the RUN ALL AGENTS switch — or press Enter',
-    inspectLabel: 'Run all agents',
+    chapter: "Chapter 2 · Over-confidence, exposed",
+    bridge: "Next: what happens when more tools start to feel like certainty.",
+    // Phase 2 restores: hint 'Flip the RUN ALL AGENTS switch — or press Enter', inspectLabel 'Run all agents'
+    hint: 'Click the glowing slate — or press Enter',
+    inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [25.4, 1.75, 5.6], target: [28.3, 1.25, -1.6], fov: 42 },
     // audio: '/audio/02-hackerrank.mp3',  // TODO: Harsh records
@@ -207,6 +229,8 @@ export const exhibits: Exhibit[] = [
     number: '—',
     kicker: '— · SECURITY CORRIDOR',
     title: 'Mind the spotlight',
+    chapter: "Interlude · Security",
+    bridge: "A short breath between stories. Mind the light.",
     hint: 'Slip past when the light is off the path — or just walk through',
     counted: false,
     station: { pos: [33, 1.7, 2.6], target: [40, 1.2, 0], fov: 50 },
@@ -225,8 +249,11 @@ export const exhibits: Exhibit[] = [
     number: '03',
     kicker: '03 · GSOC 2026 / QC-DEVS',
     title: 'The exhibit that does not belong here',
-    hint: 'Click the glass case — or press Enter',
-    inspectLabel: 'Inspect',
+    chapter: "Chapter 3 · Changed judgment",
+    bridge: "Then something changed. Same tools, used differently.",
+    // Phase 2 restores: hint 'Click the glass case — or press Enter'
+    hint: 'Click the glowing slate — or press Enter',
+    inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [45.6, 1.7, 5.4], target: [48.2, 1.25, -1.2], fov: 42 },
     // audio: '/audio/03-gsoc.mp3',  // TODO: Harsh records
@@ -273,8 +300,11 @@ export const exhibits: Exhibit[] = [
     number: '04',
     kicker: '04 · THE DEADLINE PARADOX',
     title: 'Five days, one brain',
-    hint: 'Drag the clock hand from 1 to 5 — or press Watch animation',
-    inspectLabel: 'Watch animation',
+    chapter: "Chapter 4 · Self-awareness",
+    bridge: "The flaw underneath all of it, and the rule that fixes it.",
+    // Phase 3 restores: hint 'Drag the clock hand from 1 to 5 — or press Watch animation', inspectLabel 'Watch animation'
+    hint: 'Click the glowing slate — or press Enter',
+    inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [60, 1.9, 5.6], target: [62.2, 1.9, -2.4], fov: 46 },
     // audio: '/audio/04-deadline.mp3',  // TODO: Harsh records
@@ -309,8 +339,11 @@ export const exhibits: Exhibit[] = [
     number: '05',
     kicker: '05 · THE VAULT',
     title: 'The unfinished exhibit',
-    hint: 'Open the vault door — or press Enter',
-    inspectLabel: 'Open vault',
+    chapter: "Chapter 5 · Constructive risk",
+    bridge: "And the newest attempt: the one you are standing in.",
+    // Phase 3 restores: hint 'Open the vault door — or press Enter', inspectLabel 'Open vault'
+    hint: 'Click the glowing slate — or press Enter',
+    inspectLabel: 'Read the slate',
     counted: true,
     station: { pos: [73.2, 1.8, 5.8], target: [76.4, 1.7, -2.2], fov: 44 },
     // audio: '/audio/05-vault.mp3',  // TODO: Harsh records
@@ -357,6 +390,22 @@ export const experiment: {
   status: 'not_launched',
   funnel: {},
 };
+
+/**
+ * Opening cutscene (Harsh's request, 3 Nov): who he is, told in the museum's voice.
+ * Facts only from the spec: CS student, VIT Vellore, applying to a growth team, the
+ * tagline and the "confidence is not evidence" motif. Each shot pairs with a camera move
+ * in src/scene/cutscenePath.ts (same order).
+ */
+export const cutscene: { kicker?: string; line: string; duration: number }[] = [
+  { kicker: 'After hours', line: "Welcome to the Museum of Things I Didn't Win.", duration: 5 },
+  { line: 'Most museums keep their trophies on display.', duration: 4.2 },
+  { line: "This one keeps the attempts: the hackathons and bets that didn't win.", duration: 5.2 },
+  { kicker: 'The curator', line: "I'm Harsh Jha, a computer science student at VIT Vellore.", duration: 5 },
+  { line: "Still hasn't learned to play it safe.", duration: 4 },
+  { line: 'Five exhibits. Each one holds a decision, a mistake and a lesson.', duration: 5 },
+  { kicker: 'House rule', line: 'Confidence is not evidence. So let me show you the evidence.', duration: 5 },
+];
 
 export const exitPanel = {
   closing: "THIS MUSEUM HAS NO ENDING YET. THAT'S WHY I'M APPLYING.",

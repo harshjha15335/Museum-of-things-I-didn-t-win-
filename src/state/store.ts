@@ -33,6 +33,13 @@ type State = {
   reducedMotion: boolean;
   lowPower: boolean;
   hoverArtifact: boolean;
+  /** Opening cutscene running (full mode only). */
+  cutscene: boolean;
+  /** Slate reading panel open for the current station. */
+  readerOpen: boolean;
+  /** Index of the narration cue currently spoken (-1 when none). */
+  cueIndex: number;
+  musicOn: boolean;
 
   start: (mode: Mode) => void;
   stopTour: () => void;
@@ -49,6 +56,11 @@ type State = {
   toggleMute: () => void;
   setLowPower: (v: boolean) => void;
   setHoverArtifact: (v: boolean) => void;
+  endCutscene: () => void;
+  openReader: () => void;
+  closeReader: () => void;
+  setCueIndex: (i: number) => void;
+  toggleMusic: () => void;
 };
 
 const initialPhase = Object.fromEntries(exhibits.map((e) => [e.id, 'idle'])) as Record<ExhibitId, ExhibitPhase>;
@@ -80,12 +92,38 @@ export const useMuseum = create<State>((set, get) => ({
   reducedMotion: prefersReducedMotion(),
   lowPower: false,
   hoverArtifact: false,
+  cutscene: false,
+  readerOpen: false,
+  cueIndex: -1,
+  musicOn: true,
 
   start: (mode) => {
+    // Full tour opens with the cutscene (from the lobby only); Quick Tour skips it.
+    if (mode === 'full' && get().station === 0) {
+      set({ started: true, mode, cutscene: true });
+      return;
+    }
     set({ started: true, mode });
-    // The lobby prologue plays in full mode; Quick Tour starts its own clock.
-    if (mode === 'full' && get().station === 0) get().inspect();
   },
+
+  endCutscene: () => {
+    if (!get().cutscene) return;
+    set({ cutscene: false });
+    // The lobby prologue plays right after the intro.
+    if (get().station === 0) get().inspect();
+  },
+
+  openReader: () => {
+    const s = get();
+    if (s.traveling || s.mode !== 'full' || s.cutscene) return;
+    const ex = exhibits[s.station];
+    if (ex.id === 'lobby' || ex.id === 'corridor') return;
+    set({ readerOpen: true });
+    if (s.phase[ex.id] === 'idle') get().inspect();
+  },
+  closeReader: () => set({ readerOpen: false }),
+  setCueIndex: (cueIndex) => set({ cueIndex }),
+  toggleMusic: () => set({ musicOn: !get().musicOn }),
 
   stopTour: () => set({ mode: 'full' }),
 
@@ -101,7 +139,7 @@ export const useMuseum = create<State>((set, get) => ({
     // Leaving mid-reveal counts as a skip: the visitor inspected it.
     const cur = exhibits[s.station];
     if (s.phase[cur.id] === 'reveal') get().setRecovered(cur.id);
-    set({ station: index, traveling: true, pushedIn: false, caption: null, narrating: false, revealStartedAt: null });
+    set({ station: index, traveling: true, pushedIn: false, caption: null, narrating: false, revealStartedAt: null, readerOpen: false });
   },
 
   goNext: () => {
@@ -126,8 +164,11 @@ export const useMuseum = create<State>((set, get) => ({
 
   inspect: () => {
     const s = get();
-    if (s.traveling) return;
+    if (s.traveling || s.cutscene) return;
     const ex = exhibits[s.station];
+    if (ex.id === 'corridor') return;
+    // Inspecting any room also opens its slate (reading panel) in the full tour.
+    if (ex.id !== 'lobby' && s.mode === 'full' && !s.readerOpen) set({ readerOpen: true });
     if (s.phase[ex.id] === 'reveal') return;
     // Revisit of a recovered exhibit replays narration only (no state reset).
     const phase = s.phase[ex.id] === 'recovered' ? 'recovered' : 'reveal';

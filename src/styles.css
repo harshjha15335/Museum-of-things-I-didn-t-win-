@@ -525,3 +525,253 @@ body:has(.m2d) {
     font-size: 36px;
   }
 }
+
+/* ---------- story path (top centre) ---------- */
+.story-path {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.path-stop {
+  position: relative;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 6px;
+  background: rgba(19, 21, 25, 0.75);
+  border: 1px solid rgba(185, 180, 172, 0.28);
+  color: var(--stone);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.path-stop + .path-stop::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  width: 4px;
+  height: 1px;
+  background: rgba(185, 180, 172, 0.35);
+}
+.path-stop.done {
+  border-color: rgba(224, 184, 90, 0.6);
+  color: var(--gold);
+}
+.path-stop.here {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.path-chapter {
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.plaque-chapter {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+.plaque-bridge {
+  margin: 10px 0 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--plaster);
+}
+
+/* ---------- slate reader ---------- */
+.reader {
+  position: absolute;
+  right: 24px;
+  top: 78px;
+  bottom: 96px;
+  width: min(420px, 36vw);
+  display: flex;
+  flex-direction: column;
+  background: rgba(19, 21, 25, 0.94);
+  border: 1px solid rgba(185, 180, 172, 0.2);
+  border-top: 2px solid var(--gold);
+  animation: plaqueIn 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.reader-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 10px 6px 20px;
+}
+.reader-chapter {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+.reader-body {
+  overflow-y: auto;
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.reader-body .plaque-title {
+  margin-top: 0;
+  font-size: 23px;
+}
+.reader-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.reader-story {
+  margin: -6px 0 0;
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(236, 232, 225, 0.45);
+}
+.reader-story span {
+  transition: color 300ms linear, background 300ms linear;
+}
+.reader-story span.read {
+  color: rgba(236, 232, 225, 0.85);
+}
+.reader-story span.now {
+  color: var(--plaster);
+  background: rgba(224, 184, 90, 0.16);
+  box-shadow: 0 0 0 2px rgba(224, 184, 90, 0.16);
+}
+.reader-card {
+  padding-top: 12px;
+  border-top: 1px solid rgba(185, 180, 172, 0.15);
+}
+.reader-card p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--plaster);
+}
+.reader-evidence {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.reader-evidence a {
+  color: var(--gold);
+}
+.todo {
+  color: var(--stone);
+  font-style: italic;
+}
+.reader .dossier {
+  animation: none;
+}
+.voice-note {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: rgba(185, 180, 172, 0.7);
+}
+.voice-note.inline {
+  margin: 4px 0 0;
+}
+
+/* ---------- cutscene ---------- */
+.cutscene {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
+.letterbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 11vh;
+  background: #000;
+  animation: letterIn 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.letterbox.top {
+  top: 0;
+}
+.letterbox.bottom {
+  bottom: 0;
+}
+.cut-card {
+  position: absolute;
+  left: 8vw;
+  bottom: calc(11vh + 40px);
+  max-width: min(760px, 80vw);
+  animation: cutIn 900ms ease-out both;
+}
+.cut-line {
+  margin: 10px 0 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.18;
+  color: var(--plaster);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85);
+}
+.cut-progress {
+  position: absolute;
+  left: 8vw;
+  bottom: calc(11vh + 16px);
+  display: flex;
+  gap: 6px;
+}
+.cut-progress span {
+  width: 22px;
+  height: 2px;
+  background: rgba(185, 180, 172, 0.3);
+}
+.cut-progress span.on {
+  background: var(--gold);
+}
+.cut-skip {
+  position: absolute;
+  right: 24px;
+  bottom: calc(11vh + 16px);
+}
+.cutscene .voice-note {
+  position: absolute;
+  left: 8vw;
+  bottom: calc(5.5vh - 6px);
+}
+@keyframes letterIn {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes cutIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

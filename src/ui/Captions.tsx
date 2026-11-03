@@ -8,12 +8,13 @@ export function Captions() {
   const caption = useMuseum((s) => s.caption);
   const narrating = useMuseum((s) => s.narrating);
   const mode = useMuseum((s) => s.mode);
+  const hidden = useMuseum((s) => s.readerOpen || s.cutscene);
   const [last, setLast] = useState(caption);
   useEffect(() => {
     if (caption) setLast(caption);
   }, [caption]);
   const shown = caption ?? (narrating ? last : null);
-  const visible = !!shown;
+  const visible = !!shown && !hidden;
   return (
     <div className={`captions ${visible ? 'on' : ''}`} aria-hidden={!visible}>
       <span className="caption-label">{site.captionLabel.toUpperCase()}</span>

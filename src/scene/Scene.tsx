@@ -11,6 +11,7 @@ import { C, EXHIBIT_POS } from './palette';
 import { Lobby } from './exhibits/Lobby';
 import { Samsung } from './exhibits/Samsung';
 import { Placeholder } from './exhibits/Placeholder';
+import { Slate } from './Slate';
 
 /** Weak-GPU detection (spec F4): first 60 frames under 30 fps → no shadows, no cones. */
 function PerfMonitor() {
@@ -86,6 +87,9 @@ export function Scene() {
       <Placeholder id="gsoc" />
       <Placeholder id="deadline" />
       <Placeholder id="vault" />
+      {(['samsung', 'hackerrank', 'gsoc', 'deadline', 'vault'] as const).map((id) => (
+        <Slate key={id} id={id} />
+      ))}
       <CameraRig />
       <Projector />
       <PerfMonitor />

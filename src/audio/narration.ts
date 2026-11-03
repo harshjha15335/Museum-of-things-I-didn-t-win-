@@ -1,43 +1,44 @@
 import { exhibits, type Exhibit } from '../content/exhibits';
 import { useMuseum } from '../state/store';
+import { say, hush, voiceSupported } from './voice';
+import { setMusicLevel, sting } from './music';
 
 /**
  * Narration + caption clock (spec C6).
- * Uses the audio element's currentTime when a recording exists and loads;
- * otherwise a timer (cue timings in the content file were initialised at 2.6 words/s).
- * Muted: captions keep running on their timings.
+ *  audio — Harsh's recording (when `audio` is set and the file plays); clock = audio time
+ *  voice — placeholder speech synthesis, cue by cue, until recordings exist
+ *  timer — muted / no speech: cue timings from the content file (2.6 words/s)
+ * Captions and the reading panel highlight follow whichever clock runs.
  */
 class Narrator {
   private raf = 0;
-  private t0 = 0;
   private audio: HTMLAudioElement | null = null;
   private useAudio = false;
   private exhibit: Exhibit | null = null;
   private cueIndex = -1;
-  private paused = false;
-  private pausedAt = 0;
   private onDone: (() => void) | null = null;
+  private run = 0; // generation counter so stale async loops stop
 
   start(ex: Exhibit, onDone: () => void) {
     this.stop();
     this.exhibit = ex;
     this.onDone = onDone;
     this.cueIndex = -1;
-    this.paused = false;
-    this.t0 = performance.now();
     this.useAudio = false;
+    const gen = ++this.run;
+    useMuseum.getState().setNarrating(true);
+
     if (ex.audio) {
       const a = new Audio(ex.audio);
       a.muted = useMuseum.getState().muted;
       this.audio = a;
       a.play()
         .then(() => {
-          // Switch the clock to the audio's own time once it really plays.
           if (this.audio === a) this.useAudio = true;
         })
         .catch(() => {
-          // Missing file or blocked: silently stay on the timer clock.
           if (this.audio === a) this.audio = null;
+          if (this.run === gen) this.voiceLoop(gen);
         });
       a.addEventListener('error', () => {
         if (this.audio === a) {
@@ -45,33 +46,54 @@ class Narrator {
           this.useAudio = false;
         }
       });
+      this.tick();
+      return;
     }
-    useMuseum.getState().setNarrating(true);
-    this.tick();
+    this.voiceLoop(gen);
   }
 
-  private time() {
-    if (this.useAudio && this.audio) return this.audio.currentTime;
-    if (this.paused) return this.pausedAt;
-    return (performance.now() - this.t0) / 1000;
+  /** Speak cue by cue; when muted (or no speech engine) wait out each cue's timing instead. */
+  private async voiceLoop(gen: number) {
+    const ex = this.exhibit;
+    if (!ex) return;
+    const cues = ex.narration;
+    for (let i = 0; i < cues.length; i++) {
+      if (this.run !== gen) return;
+      this.setCue(ex, i);
+      const minMs = (cues[i].end - cues[i].start) * 1000;
+      const started = performance.now();
+      const muted = useMuseum.getState().muted;
+      if (!muted && voiceSupported()) await say(cues[i].text);
+      const left = (muted || !voiceSupported() ? minMs : 250) - (performance.now() - started);
+      if (left > 0) await new Promise((r) => window.setTimeout(r, left));
+    }
+    if (this.run !== gen) return;
+    const done = this.onDone;
+    this.stop();
+    done?.();
+  }
+
+  private setCue(ex: Exhibit, idx: number) {
+    if (idx === this.cueIndex) return;
+    this.cueIndex = idx;
+    const s = useMuseum.getState();
+    s.setCaption(idx >= 0 ? { text: ex.narration[idx].text, key: `${ex.id}-${idx}` } : null);
+    s.setCueIndex(idx);
   }
 
   private tick = () => {
     const ex = this.exhibit;
     if (!ex) return;
-    const t = this.time();
+    if (!this.useAudio || !this.audio) {
+      if (this.audio) this.raf = requestAnimationFrame(this.tick); // still loading
+      return;
+    }
+    const t = this.audio.currentTime;
     const cues = ex.narration;
     let idx = -1;
-    for (let i = 0; i < cues.length; i++) {
-      if (t >= cues[i].start && t < cues[i].end + 0.25) idx = i;
-    }
-    if (idx !== this.cueIndex) {
-      this.cueIndex = idx;
-      useMuseum.getState().setCaption(idx >= 0 ? { text: cues[idx].text, key: `${ex.id}-${idx}` } : null);
-    }
-    const last = cues[cues.length - 1];
-    const ended = this.useAudio && this.audio ? this.audio.ended || t > last.end + 0.4 : t > (last?.end ?? 0) + 0.4;
-    if (ended) {
+    for (let i = 0; i < cues.length; i++) if (t >= cues[i].start && t < cues[i].end + 0.25) idx = i;
+    this.setCue(ex, idx);
+    if (this.audio.ended) {
       const done = this.onDone;
       this.stop();
       done?.();
@@ -82,19 +104,13 @@ class Narrator {
 
   setMuted(m: boolean) {
     if (this.audio) this.audio.muted = m;
-  }
-
-  /** Current narration time in seconds (for room animations keyed to cues). */
-  now() {
-    return this.exhibit ? this.time() : 0;
-  }
-
-  get activeId() {
-    return this.exhibit?.id ?? null;
+    if (m) hush();
   }
 
   stop() {
+    this.run++;
     cancelAnimationFrame(this.raf);
+    hush();
     if (this.audio) {
       this.audio.pause();
       this.audio = null;
@@ -106,6 +122,7 @@ class Narrator {
     const s = useMuseum.getState();
     if (s.caption) s.setCaption(null);
     if (s.narrating) s.setNarrating(false);
+    if (s.cueIndex !== -1) s.setCueIndex(-1);
   }
 
   skip() {
@@ -136,10 +153,23 @@ function runQuickStop(index: number) {
   }, dwell);
 }
 
+function musicLevel() {
+  const s = useMuseum.getState();
+  if (!s.started || s.muted || !s.musicOn) return setMusicLevel('off');
+  setMusicLevel(s.narrating ? 'bed' : 'full');
+}
+
 /** Wire the narrator to store changes. Call once at startup. */
 export function initNarration() {
   useMuseum.subscribe((s, prev) => {
     if (s.muted !== prev.muted) narrator.setMuted(s.muted);
+    if (s.muted !== prev.muted || s.narrating !== prev.narrating || s.musicOn !== prev.musicOn || s.started !== prev.started)
+      musicLevel();
+
+    // Recovery chime for counted rooms.
+    for (const ex of exhibits) {
+      if (ex.counted && s.phase[ex.id] === 'recovered' && prev.phase[ex.id] !== 'recovered' && s.mode === 'full') sting();
+    }
 
     // Leaving a station stops whatever was playing.
     if (s.station !== prev.station) {
@@ -171,4 +201,3 @@ export function initNarration() {
     }
   });
 }
-
