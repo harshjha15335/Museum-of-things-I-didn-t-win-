@@ -10,6 +10,36 @@ import { setMusicLevel, sting } from './music';
  *  timer — muted / no speech: cue timings from the content file (2.6 words/s)
  * Captions and the reading panel highlight follow whichever clock runs.
  */
+const primed = new Map<string, HTMLAudioElement>();
+
+/**
+ * Start (and at once pause) a recording inside a user gesture, so it may play later from a timer:
+ * the lobby prologue begins on its own when the intro ends, and Safari blocks unprimed elements.
+ */
+export function primeNarration(src: string | undefined) {
+  if (!src || primed.has(src) || typeof Audio === 'undefined') return;
+  const a = new Audio(src);
+  a.preload = 'auto';
+  a.muted = true;
+  primed.set(src, a);
+  a.play()
+    .then(() => {
+      if (primed.get(src) === a) {
+        a.pause();
+        a.currentTime = 0;
+      }
+    })
+    .catch(() => {});
+}
+
+/** Start downloading a room's recording before the visitor inspects it. */
+function prefetchNarration(src: string | undefined) {
+  if (!src || primed.has(src) || typeof Audio === 'undefined') return;
+  const a = new Audio(src);
+  a.preload = 'auto';
+  primed.set(src, a);
+}
+
 class Narrator {
   private raf = 0;
   private audio: HTMLAudioElement | null = null;
@@ -29,7 +59,9 @@ class Narrator {
     useMuseum.getState().setNarrating(true);
 
     if (ex.audio) {
-      const a = new Audio(ex.audio);
+      const a = primed.get(ex.audio) ?? new Audio(ex.audio);
+      primed.delete(ex.audio);
+      a.currentTime = 0;
       a.muted = useMuseum.getState().muted;
       this.audio = a;
       a.play()
@@ -90,8 +122,10 @@ class Narrator {
     }
     const t = this.audio.currentTime;
     const cues = ex.narration;
+    // Hold each caption until the next line starts (short pauses don't blink it off).
     let idx = -1;
-    for (let i = 0; i < cues.length; i++) if (t >= cues[i].start && t < cues[i].end + 0.25) idx = i;
+    for (let i = 0; i < cues.length; i++) if (t >= cues[i].start - 0.05) idx = i;
+    if (idx >= 0 && t > cues[idx].end + 1.2) idx = -1;
     this.setCue(ex, idx);
     if (this.audio.ended) {
       const done = this.onDone;
@@ -169,6 +203,12 @@ export function initNarration() {
     // Recovery chime for counted rooms.
     for (const ex of exhibits) {
       if (ex.counted && s.phase[ex.id] === 'recovered' && prev.phase[ex.id] !== 'recovered' && s.mode === 'full') sting();
+    }
+
+    // Fetch this room's recording (and the next one's) while the camera travels.
+    if (s.started && (s.station !== prev.station || !prev.started)) {
+      prefetchNarration(exhibits[s.station]?.audio);
+      prefetchNarration(exhibits[s.station + 1]?.audio);
     }
 
     // Leaving a station stops whatever was playing.

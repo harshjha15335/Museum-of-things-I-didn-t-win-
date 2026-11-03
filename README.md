@@ -27,10 +27,11 @@ Inspect: click the glowing artifact, the Inspect button, or `Enter` / `Space`. `
 | --- | --- |
 | `src/content/exhibits.ts` | **All copy**: plaques, narration cues (start/end seconds), quick lines, cards, evidence, experiment data. Components never hard-code story text. |
 | `src/state/store.ts` | Station, mode (full / quick), per-exhibit state machine, mute, UI flags. |
-| `src/audio/narration.ts` | Caption clock. Uses the recording's time when `audio` is set on an exhibit, otherwise a timer. |
+| `src/audio/narration.ts` | Caption clock. Follows the recording's time when `audio` is set on an exhibit (placeholder speech only if a file fails to play). Prefetches each room's file on arrival. |
+| `tools/voice_mastering/` | The local audio pipeline (Python): clean, enhance, master, word and voice checks, caption alignment. No audio is stored there. |
 | `src/scene/` | Hall, lights, camera rig, spotlights, exhibits. |
 | `src/ui/` | HTML overlay: top bar, plaque, dossier, captions, Next, toast, start screen, footer. |
-| `public/audio/` | Drop `00-prologue.mp3` … `05-vault.mp3` here, then uncomment `audio:` in the content file and re-sync cue timings. |
+| `public/audio/` | Harsh's narration: `00-intro.mp3` (opening cutscene), `00-lobby.mp3` … `05-vault.mp3`. Mastered from his takes with `tools/voice_mastering/` (noise removal, EQ, de-ess, compression, -16 LUFS, -1.5 dBTP). Captions are timed to the words; if a take is re-recorded, re-run the pipeline and `force_align.py` (forced alignment of the caption words). |
 
 ## Look (v2.2)
 
@@ -44,4 +45,4 @@ On Harsh's request the colour scheme and architecture were reworked to sit much 
 - [ ] Phase 4: recordings, ambient + stings, real 2D mobile stage, performance pass, deploy
 - [ ] Phase 5–6: real experiment numbers, final copy, QA, submit
 
-Open inputs still marked `TODO` in the content file: ASTFLOW repo URL, QC-Devs FFprime URL and PRs, the six narration recordings, voice-build clips, experiment data, $3,000 answer, start date, video URL, contact.
+Open inputs still marked `TODO` in the content file: ASTFLOW repo URL, QC-Devs FFprime URL and PRs, voice-build clips, experiment data, $3,000 answer, start date, video URL, contact.
