@@ -44,6 +44,7 @@ export function StartScreen() {
           <span>{hud.briefingTitleTop}</span>
           <span className="accent">{hud.briefingTitleBottom}</span>
         </h1>
+        <p className="briefing-hook">{hud.briefingHook}</p>
         <p className="briefing-line">{hud.briefingLine}</p>
         <ul className="menu" role="menu">
           {items.map((it, i) => (

@@ -112,8 +112,11 @@ export const hud = {
   briefingKicker: 'After-hours job · Case file HJ-26',
   briefingTitleTop: 'The Museum of',
   briefingTitleBottom: "Things I Didn't Win",
-  briefingLine: "Five case files. Five near-misses. Get in, secure every artifact, and find out what each one cost.",
-  briefingMeta: ['Run time ≈ 3 min', 'Sound optional', 'By Harsh Jha'],
+  /** The 5-second hook: what this is, who made it, why it exists. */
+  briefingHook: 'A job application you can walk through.',
+  briefingLine:
+    "Harsh Jha's near-misses, turned into a playable after-hours museum for the Wispr Flow growth challenge, and built by voice with Wispr Flow. The best part is locked in the vault.",
+  briefingMeta: ['Full run ≈ 3 min', 'Quick recon ≈ 90 s', 'Sound optional'],
   startJob: 'Start the job',
   startJobSub: 'Full run · opening briefing',
   quickRecon: 'Quick recon',
@@ -391,39 +394,47 @@ export const exhibits: Exhibit[] = [
     id: 'vault',
     number: '05',
     kicker: '05 · THE VAULT',
-    title: 'The unfinished exhibit',
-    chapter: "Chapter 5 · Constructive risk",
-    bridge: "Last file. The one you're standing in.",
-    // Phase 3 restores: hint 'Open the vault door — or press Enter', inspectLabel 'Open vault'
-    hint: 'Hit the glowing slate, or press E',
-    inspectLabel: 'Read the slate',
+    title: 'Our best-kept secret',
+    chapter: 'Chapter 5 · Constructive risk',
+    bridge: 'We saved the best for last. Crack the vault.',
+    hint: 'Hit the vault door to crack it, or press E',
+    inspectLabel: 'Crack the vault',
     counted: true,
-    station: { pos: [73.2, 1.8, 5.8], target: [76.4, 1.7, -2.2], fov: 44 },
+    station: {
+      pos: [73.2, 1.8, 5.8],
+      target: [77.2, 1.7, -2.2],
+      fov: 44,
+      pushIn: { pos: [74.9, 1.75, 4.3], target: [76.9, 1.65, -3.0] },
+    },
     // audio: '/audio/05-vault.mp3',  // TODO: Harsh records
-    // Narration follows experiment.status (spec I3). While the test is `not_launched`,
-    // the "ran a small voice test" sentence is removed. When results exist, add
-    // ONE verified result + ONE honest learning (max 25 words) after "So I built this museum by voice".
+    // Campaign specifics come from Harsh (TODO). Only verified numbers, each with its denominator (spec Part I).
     narration: cues([
-      "Case file five. The newest exhibit. You're standing inside it.",
+      'Case file five. The vault.',
+      "Every museum keeps one thing off the main floor. This is ours: our best-kept secret.",
+      'We saved the best for last.',
+      'Inside: the Wispr Flow campaign I ran during this challenge.',
       "I'm a computer science student, applying to a growth team.",
-      "Here's what I like about Wispr: I say a messy thought out loud and get usable text back.",
-      "My edge in growth: I don't just suggest the experiment. I build it.",
-      'So I built this museum by voice.',
-      "I don't know how this application ends.",
+      "My edge in growth: I don't just suggest the experiment. I build it, and I run it.",
+      'And I built this whole museum by voice.',
       "This museum has no ending yet. That's why I'm applying.",
     ]),
-    quickLine: 'The final file: this museum, built by voice.',
+    quickLine: 'The vault: our best-kept secret, the Wispr Flow campaign I ran.',
     cards: [
-      { id: 'build-proof', label: 'Built by voice', body: 'This museum was built by speaking.' },
-      { id: 'setup', label: 'Gift shop · $3,000 setup', body: 'TODO' },
-      { id: 'start', label: 'Earliest start', body: 'TODO' },
+      { id: 'campaign', label: 'The campaign', body: 'TODO' }, // TODO Harsh: what it was, who it reached, when
+      { id: 'campaign-result', label: 'Results (verified only)', body: 'TODO' }, // TODO numbers with denominators
+      { id: 'campaign-learned', label: 'What I learned', body: 'TODO' },
+      { id: 'build-proof', label: 'Built by voice', body: 'Every change to this museum was asked for out loud through Wispr Flow.' },
     ],
     evidence: [
+      { label: 'Campaign posts, screenshots or links', todo: true },
       { label: 'Clips of Harsh dictating the build via Wispr Flow', todo: true },
-      { label: 'Words dictated (only if Wispr shows it)', todo: true },
     ],
     props: {
       youAreHere: 'You are here',
+      posterKicker: 'CASE FILE 05 · CLASSIFIED',
+      posterTitle: 'THE WISPR CAMPAIGN',
+      posterSub: 'Run by Harsh Jha · during this challenge',
+      posterStamp: 'BEST FOR LAST',
     },
   },
 ];
@@ -458,6 +469,27 @@ export const cutscene: { kicker?: string; line: string; duration: number }[] = [
   { line: 'Five case files. Each one: a call I made, what broke, and what I kept.', duration: 5.2 },
   { kicker: 'House rule', line: 'Confidence is not evidence. So tonight, we go get the evidence.', duration: 5.2 },
 ];
+
+/** Gift shop (the $3,000 "oddly specific setup" answer) and exit desk (logistics), shown in the vault file. */
+export const giftShop = {
+  label: 'Gift shop',
+  item: 'The $3,000 setup',
+  body: 'TODO', // TODO Harsh: his oddly specific setup requirement
+  price: '$3,000 · grant',
+};
+
+export const exitDesk = {
+  label: 'Exit desk',
+  rows: [
+    { k: 'Role', v: 'TODO' }, // TODO: Internship / Full-time / Either
+    { k: 'Earliest start', v: 'TODO' },
+    { k: 'Bangalore', v: 'TODO' }, // TODO: based there / willing to travel
+    { k: 'Built', v: '28 Oct – 4 Nov 2026, by voice' },
+  ],
+  hire: 'Hire the curator',
+  share: 'Share this museum',
+  shareText: "I walked through Harsh Jha's Museum of Things I Didn't Win, built by voice with Wispr Flow.",
+};
 
 export const exitPanel = {
   closing: "THIS MUSEUM HAS NO ENDING YET. THAT'S WHY I'M APPLYING.",

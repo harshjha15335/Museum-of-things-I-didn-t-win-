@@ -1378,7 +1378,7 @@ body:has(.m2d) {
 }
 .briefing-inner {
   width: min(680px, 86vw);
-  top: 41%;
+  top: 37%;
 }
 .briefing-title {
   font-size: clamp(40px, 5vw, 70px);
@@ -1390,4 +1390,96 @@ body:has(.m2d) {
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+}
+
+/* ---------- 5-second hook, gift shop, exit desk (v2.5) ---------- */
+.briefing-hook {
+  margin: 16px 0 0;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.briefing-hook + .briefing-line {
+  margin-top: 6px;
+}
+.reader-card.gift,
+.reader-card.desk {
+  border-color: rgba(212, 172, 98, 0.45);
+}
+.gift-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 6px;
+}
+.gift-item {
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+.gift-price {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--amber);
+}
+.desk-rows {
+  margin: 8px 0 0;
+}
+.desk-rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.desk-rows dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+.desk-rows dd {
+  margin: 0;
+  text-align: right;
+}
+.desk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.desk-btn {
+  padding: 9px 14px;
+  border: 1px solid rgba(243, 235, 221, 0.35);
+  border-radius: 3px;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--plaster);
+  text-decoration: none;
+}
+.desk-btn:hover {
+  border-color: var(--amber);
+}
+.desk-btn.primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #1e140e;
+}
+.desk-closing {
+  margin: 14px 0 0;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
 }

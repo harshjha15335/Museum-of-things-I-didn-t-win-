@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { exhibits, hud, site } from '../content/exhibits';
+import { exhibits, exitDesk, exitPanel, giftShop, hud, site } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { Dossier } from './Dossier';
 
@@ -85,8 +85,56 @@ export function SlateReader() {
             </ul>
           </section>
         )}
+        {ex.id === 'vault' && <ExitDesk />}
         {!ex.audio && <p className="voice-note inline">{site.synthVoiceNote}</p>}
       </div>
     </aside>
+  );
+}
+
+const todo = (v: string) => (v === 'TODO' ? <em className="todo">{site.todoLabel}</em> : v);
+
+/** Gift shop ($3,000 setup) + exit desk (logistics and calls to action), at the end of the vault file. */
+function ExitDesk() {
+  const url = typeof location !== 'undefined' ? location.href.split('#')[0] : '';
+  const linkedin = exitPanel.links.find((l) => l.label === 'LinkedIn')?.url;
+  const share = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  const shareX = `https://x.com/intent/post?text=${encodeURIComponent(exitDesk.shareText)}&url=${encodeURIComponent(url)}`;
+  return (
+    <>
+      <section className="reader-card gift">
+        <div className="reader-label">{giftShop.label}</div>
+        <div className="gift-row">
+          <span className="gift-item">{giftShop.item}</span>
+          <span className="gift-price">{giftShop.price}</span>
+        </div>
+        <p>{todo(giftShop.body)}</p>
+      </section>
+      <section className="reader-card desk">
+        <div className="reader-label">{exitDesk.label}</div>
+        <dl className="desk-rows">
+          {exitDesk.rows.map((r) => (
+            <div key={r.k}>
+              <dt>{r.k}</dt>
+              <dd>{todo(r.v)}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="desk-actions">
+          {linkedin && (
+            <a className="desk-btn primary" href={linkedin} target="_blank" rel="noreferrer">
+              {exitDesk.hire}
+            </a>
+          )}
+          <a className="desk-btn" href={share} target="_blank" rel="noreferrer">
+            {exitDesk.share} · LinkedIn
+          </a>
+          <a className="desk-btn" href={shareX} target="_blank" rel="noreferrer">
+            X
+          </a>
+        </div>
+        <p className="desk-closing">{exitPanel.closing}</p>
+      </section>
+    </>
   );
 }

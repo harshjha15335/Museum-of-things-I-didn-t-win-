@@ -160,7 +160,7 @@ function Ropes() {
     const posts: V3[] = [];
     const tops: V3[] = [];
     const ropes: THREE.TubeGeometry[] = [];
-    for (const id of ['samsung', 'hackerrank', 'gsoc', 'deadline', 'vault'] as const) {
+    for (const id of ['samsung', 'hackerrank', 'gsoc', 'deadline'] as const) {
       const [x, z] = EXHIBIT_POS[id];
       const rz = z + 2.75;
       const xs = [x - 1.9, x, x + 1.9];
