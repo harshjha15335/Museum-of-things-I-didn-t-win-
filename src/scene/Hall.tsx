@@ -4,7 +4,7 @@ import { MeshReflectorMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { exhibits, site } from '../content/exhibits';
-import { C, ARCHWAYS, BANNER_X, EXHIBIT_POS, LOBBY_END, LOBBY_H } from './palette';
+import { C, ARCHWAYS, BANNER_X, LOBBY_END, LOBBY_H } from './palette';
 import { makeCanvasTexture, spacedText } from './textures';
 import { Architecture } from './Architecture';
 
@@ -139,11 +139,6 @@ function Banner({ x, number }: { x: number; number: string }) {
 export function Hall({ lowPower }: { lowPower: boolean }) {
   const fins = useMemo(() => ARCHWAYS.map((x) => [x, 2.5, FIN_CZ] as V3), []);
   const beams = useMemo(() => ARCHWAYS.map((x) => [x, 4.82, FLOOR_CZ] as V3), []);
-  // vertical light strips on both faces of every fin, near the open edge
-  const strips = useMemo(
-    () => ARCHWAYS.flatMap((x) => [[x - 0.31, 2.4, -1.55] as V3, [x + 0.31, 2.4, -1.55] as V3]),
-    [],
-  );
   const panelXs = [-5.2, 4.2, 18.2, 31.2, 51.6, 65.4, 81];
   // (banners sit just left of each exhibit; panels fill the gaps)
   const panelFrames = useMemo(() => panelXs.map((x) => [x, 2.35, -3.96] as V3), []);
@@ -221,17 +216,18 @@ export function Hall({ lowPower }: { lowPower: boolean }) {
         />
       </mesh>
 
-      {/* Room fins (dividers) + depth-spanning beams + cool vertical light strips */}
+      {/* Room fins (dividers) + depth-spanning beams (v2.4: ivory stone, no light strips) */}
       <Instanced positions={fins} scale={[0.6, 5, FIN_DEPTH]} color={C.pilaster} roughness={0.75} metalness={0.25} />
       <Instanced positions={beams} scale={[0.7, 0.36, DEPTH]} color={C.gunmetal} roughness={0.5} metalness={0.5} />
-      <Instanced positions={strips} scale={[0.03, 3.8, 0.06]} color={C.strip} basic />
 
       {/* Track-light fixtures */}
 
 
       {/* Framed wall panels with small picture lights */}
-      <Instanced positions={panelFrames} scale={[1.7, 2.3, 0.06]} color={C.gunmetal} roughness={0.5} metalness={0.5} />
-      <Instanced positions={panelFills} scale={[1.46, 2.06, 0.04]} color={C.panel} roughness={0.85} metalness={0.05} />
+      <Instanced positions={panelFrames} scale={[1.7, 2.3, 0.06]} color={C.gilt} roughness={0.35} metalness={0.8} />
+      {['#2E3A2C', '#4D3022', '#27304A'].map((c, k) => (
+        <Instanced key={c} positions={panelFills.filter((_, i) => i % 3 === k)} scale={[1.46, 2.06, 0.04]} color={c} roughness={0.6} metalness={0.05} />
+      ))}
       <Instanced positions={panelLights} scale={[1.1, 0.03, 0.08]} color={C.strip} basic />
 
       {/* Tall room banners */}
@@ -284,11 +280,7 @@ function Lasers() {
       laser(V(39, 0.5, -3.9), V(42.4, 2.2, 3.5)),
       laser(V(41.5, 2.4, -3.9), V(43, 0.7, 3.5)),
     ];
-    for (const id of ['samsung', 'hackerrank', 'gsoc', 'deadline', 'vault'] as const) {
-      const [x] = EXHIBIT_POS[id];
-      out.push(laser(V(x - 6.2, 0.12, 1.9), V(x - 1.9, 0.12, -3.95)));
-      out.push(laser(V(x + 6.2, 0.12, 1.9), V(x + 1.9, 0.12, -3.95)));
-    }
+    // Gallery bays no longer carry floor lasers (v2.4): security lives in the corridor only.
     return out;
   }, []);
   return (
@@ -321,11 +313,11 @@ export function HallLights({ lowPower }: { lowPower: boolean }) {
   const washXs = [10.5, 17.5, 24.5, 31.5, 45.5, 52.5, 59.5, 66.5, 73.5, 80.5];
   return (
     <>
-      <hemisphereLight args={["#5F6B7A", "#050506", 0.85]} />
-      <ambientLight color="#8A93A0" intensity={0.05} />
+      <hemisphereLight args={["#8C6A4E", "#0A0605", 0.95]} />
+      <ambientLight color="#B08A66" intensity={0.06} />
       <Env />
       {washXs.map((x) => (
-        <pointLight key={x} position={[x, 4.5, -3.4]} color="#B9C2CE" intensity={lowPower ? 12 : 14} distance={7} decay={1.1} />
+        <pointLight key={x} position={[x, 4.5, -3.4]} color="#FFD2A0" intensity={lowPower ? 13 : 16} distance={7} decay={1.1} />
       ))}
       {/* Lobby atrium: cool light falling from the skylight, plus two soft wall grazers */}
       <spotLight

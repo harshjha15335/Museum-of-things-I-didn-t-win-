@@ -1,5 +1,9 @@
 /**
- * Palette v2.2 — reworked on Harsh's request (2 Nov) to sit much closer to the reference
+ * Palette v2.4 (3 Nov): Harsh felt v2.2 read as a high-tech lab, so the hall moves to a
+ * classic gallery: oxblood walls, ivory stone columns, walnut wood, gilt frames, warm light.
+ * Security stays as a heist accent (corridor lasers, the stamp) rather than the whole look.
+ *
+ * Earlier note, palette v2.2 — reworked on Harsh's request (2 Nov) to sit much closer to the reference
  * screenshots: the secured-gallery shot (ref 3, primary) for colour and light, the hall,
  * corridor, lobby and entrance shots (refs 1, 2, 4, 6) for architecture. Our own geometry;
  * nothing traced or copied.
@@ -10,7 +14,7 @@
 export const C = {
   plaster: '#ECE8E1', // text on dark, the few light objects
   stone: '#B9B4AC', // secondary text, light trims
-  gunmetal: '#2A2C31', // desks, frames, beams, vault
+  gunmetal: '#3A2A1F', // walnut: desks, beams, mouldings, bases
   ink: '#131519', // UI panels, ceiling, clock face
   gold: '#E0B85A', // guide line, banners, outlines, progress, primary button, GSoC payoff
   red: '#C8323A', // security: rings, warning frames, stamp
@@ -18,13 +22,15 @@ export const C = {
   monitor: '#6E92B5', // screens, code graph
   // derived darks — surfaces only
   bg: '#0A0B0D',
-  wall: '#2B2E34',
-  pilaster: '#17191D',
-  floor: '#0B0C0E',
-  panel: '#33363C',
+  wall: '#4A1E23', // oxblood gallery wall
+  pilaster: '#9E9381', // ivory stone: fins, columns
+  floor: '#1E140E', // dark polished walnut
+  panel: '#2E3A2C', // painting ground
+  gilt: '#B48A3C', // picture frames, stanchions
+  velvet: '#7A1622', // rope
   // light colours
   spot: '#F6D7A4', // warm exhibit light
-  strip: '#C9D4E2', // cool vertical light strips / skylight
+  strip: '#FFE0B2', // warm sconces / skylight (was cool strips)
 };
 
 /** Exhibit floor positions (x along the hall, z in front of the back wall). */
@@ -41,12 +47,12 @@ export const EXHIBIT_POS = {
 /** Ring colour per exhibit: red security rings, gold for the one success (GSoC) and the lobby. */
 export const RING = {
   lobby: '#E0B85A',
-  samsung: '#FF3B3B',
-  hackerrank: '#FF3B3B',
+  samsung: '#9C7436',
+  hackerrank: '#9C7436',
   corridor: '#FF3B3B',
   gsoc: '#E0B85A',
-  deadline: '#FF3B3B',
-  vault: '#FF3B3B',
+  deadline: '#9C7436',
+  vault: '#9C7436',
 } as const;
 
 export const ARCHWAYS = [7, 21, 33, 43, 55, 69];

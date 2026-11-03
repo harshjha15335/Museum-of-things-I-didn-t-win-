@@ -1,11 +1,11 @@
 /* Visual system (spec Part E): seven colours, Fraunces + Inter, motion tokens. */
 :root {
   /* v2.2 palette: charcoal + warm light + red security accents (see src/scene/palette.ts) */
-  --plaster: #e6eef4;
-  --stone: #8ea3b4;
+  --plaster: #f3ebdd;
+  --stone: #b3a68f;
   --gunmetal: #2a2c31;
   --ink: #131519;
-  --gold: #7fe8dc;
+  --gold: #e6cc96;
   --red: #c8323a;
   --monitor: #6e92b5;
   --bg: #0a0b0d;
@@ -61,8 +61,8 @@ button {
 .ui-btn {
   min-height: 44px;
   padding: 0 16px;
-  border: 1px solid rgba(142, 163, 180, 0.45);
-  background: rgba(19, 21, 25, 0.82);
+  border: 1px solid rgba(179, 166, 143, 0.45);
+  background: rgba(24, 15, 12, 0.82);
   color: var(--plaster);
   font-size: 11px;
   font-weight: 700;
@@ -80,7 +80,7 @@ button {
   color: var(--ink);
 }
 .ui-btn.gold:hover {
-  background: #8ff0e5;
+  background: #ecd29c;
 }
 .ui-btn.big {
   min-height: 50px;
@@ -179,7 +179,7 @@ button {
   animation: plaqueIn 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 .plaque {
-  background: rgba(19, 21, 25, 0.9);
+  background: rgba(24, 15, 12, 0.9);
   border-left: 2px solid var(--gold);
   padding: 18px 20px 18px;
 }
@@ -205,8 +205,8 @@ button {
 
 .dossier {
   position: relative;
-  background: rgba(19, 21, 25, 0.92);
-  border: 1px solid rgba(142, 163, 180, 0.22);
+  background: rgba(24, 15, 12, 0.92);
+  border: 1px solid rgba(179, 166, 143, 0.22);
   padding: 16px 20px;
   animation: plaqueIn 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   overflow: hidden;
@@ -216,7 +216,7 @@ button {
 }
 .dossier-row {
   padding: 7px 0;
-  border-top: 1px solid rgba(142, 163, 180, 0.14);
+  border-top: 1px solid rgba(179, 166, 143, 0.14);
 }
 .dossier-row dt {
   font-size: 10px;
@@ -263,7 +263,7 @@ button {
   gap: 14px;
   padding: 10px 10px 10px 18px;
   background: rgba(10, 11, 13, 0.86);
-  border: 1px solid rgba(142, 163, 180, 0.16);
+  border: 1px solid rgba(179, 166, 143, 0.16);
   opacity: 0;
   visibility: hidden;
   transition: opacity 300ms linear, visibility 0s linear 300ms;
@@ -324,7 +324,7 @@ button {
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  background: rgba(19, 21, 25, 0.92);
+  background: rgba(24, 15, 12, 0.92);
   border: 1px solid var(--gold);
   color: var(--plaster);
   font-size: 11px;
@@ -353,7 +353,7 @@ button {
   bottom: 8px;
   font-size: 9px;
   letter-spacing: 0.04em;
-  color: rgba(142, 163, 180, 0.7);
+  color: rgba(179, 166, 143, 0.7);
   pointer-events: none;
 }
 .footer.static {
@@ -504,10 +504,10 @@ body:has(.m2d) {
 @keyframes nextPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(54, 226, 207, 0);
+    box-shadow: 0 0 0 0 rgba(212, 172, 98, 0);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(54, 226, 207, 0.25);
+    box-shadow: 0 0 0 8px rgba(212, 172, 98, 0.25);
   }
 }
 
@@ -541,8 +541,8 @@ body:has(.m2d) {
   min-width: 34px;
   height: 30px;
   padding: 0 6px;
-  background: rgba(19, 21, 25, 0.75);
-  border: 1px solid rgba(142, 163, 180, 0.28);
+  background: rgba(24, 15, 12, 0.75);
+  border: 1px solid rgba(179, 166, 143, 0.28);
   color: var(--stone);
   font-size: 10px;
   font-weight: 700;
@@ -556,10 +556,10 @@ body:has(.m2d) {
   top: 50%;
   width: 4px;
   height: 1px;
-  background: rgba(142, 163, 180, 0.35);
+  background: rgba(179, 166, 143, 0.35);
 }
 .path-stop.done {
-  border-color: rgba(54, 226, 207, 0.6);
+  border-color: rgba(212, 172, 98, 0.6);
   color: var(--gold);
 }
 .path-stop.here {
@@ -606,8 +606,8 @@ body:has(.m2d) {
   width: min(420px, 36vw);
   display: flex;
   flex-direction: column;
-  background: rgba(19, 21, 25, 0.94);
-  border: 1px solid rgba(142, 163, 180, 0.2);
+  background: rgba(24, 15, 12, 0.94);
+  border: 1px solid rgba(179, 166, 143, 0.2);
   border-top: 2px solid var(--gold);
   animation: plaqueIn 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
@@ -648,22 +648,22 @@ body:has(.m2d) {
   font-family: var(--display);
   font-size: 17px;
   line-height: 1.6;
-  color: rgba(230, 238, 244, 0.45);
+  color: rgba(243, 235, 221, 0.45);
 }
 .reader-story span {
   transition: color 300ms linear, background 300ms linear;
 }
 .reader-story span.read {
-  color: rgba(230, 238, 244, 0.85);
+  color: rgba(243, 235, 221, 0.85);
 }
 .reader-story span.now {
   color: var(--plaster);
-  background: rgba(54, 226, 207, 0.16);
-  box-shadow: 0 0 0 2px rgba(54, 226, 207, 0.16);
+  background: rgba(212, 172, 98, 0.16);
+  box-shadow: 0 0 0 2px rgba(212, 172, 98, 0.16);
 }
 .reader-card {
   padding-top: 12px;
-  border-top: 1px solid rgba(142, 163, 180, 0.15);
+  border-top: 1px solid rgba(179, 166, 143, 0.15);
 }
 .reader-card p {
   margin: 6px 0 0;
@@ -690,7 +690,7 @@ body:has(.m2d) {
 .voice-note {
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: rgba(142, 163, 180, 0.7);
+  color: rgba(179, 166, 143, 0.7);
 }
 .voice-note.inline {
   margin: 4px 0 0;
@@ -742,7 +742,7 @@ body:has(.m2d) {
 .cut-progress span {
   width: 22px;
   height: 2px;
-  background: rgba(142, 163, 180, 0.3);
+  background: rgba(179, 166, 143, 0.3);
 }
 .cut-progress span.on {
   background: var(--gold);
@@ -778,15 +778,15 @@ body:has(.m2d) {
 
 /* =========================================================================
    Heist-thriller HUD (UI rebuild v3, 3 Nov). Condensed display + mono labels,
-   cyan for interaction, red for security, cool white text. Original design.
+   gilt for interaction, red for security, ivory text (museum pass v2.4). Original design.
    ========================================================================= */
 :root {
   --cond: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --amber: #36e2cf;
+  --amber: #d4ac62;
   --alarm: #ff4a4a;
-  --glass: rgba(10, 11, 13, 0.72);
-  --line: rgba(230, 238, 244, 0.14);
+  --glass: rgba(20, 12, 10, 0.74);
+  --line: rgba(243, 235, 221, 0.14);
 }
 
 .key {
@@ -795,10 +795,10 @@ body:has(.m2d) {
   min-width: 24px;
   height: 24px;
   padding: 0 6px;
-  border: 1px solid rgba(230, 238, 244, 0.55);
+  border: 1px solid rgba(243, 235, 221, 0.55);
   border-bottom-width: 3px;
   border-radius: 4px;
-  background: rgba(230, 238, 244, 0.08);
+  background: rgba(243, 235, 221, 0.08);
   color: var(--plaster);
   font-family: var(--mono);
   font-size: 11px;
@@ -877,7 +877,7 @@ body:has(.m2d) {
   padding: 0;
   background: none;
   border: 0;
-  color: rgba(230, 238, 244, 0.62);
+  color: rgba(243, 235, 221, 0.62);
   font-family: var(--ui);
   font-size: 13px;
   text-align: left;
@@ -890,7 +890,7 @@ body:has(.m2d) {
   width: 12px;
   font-family: var(--mono);
   font-size: 12px;
-  color: rgba(230, 238, 244, 0.5);
+  color: rgba(243, 235, 221, 0.5);
 }
 .hud-item.here {
   color: var(--plaster);
@@ -900,9 +900,9 @@ body:has(.m2d) {
   color: var(--amber);
 }
 .hud-item.done {
-  color: rgba(230, 238, 244, 0.45);
+  color: rgba(243, 235, 221, 0.45);
   text-decoration: line-through;
-  text-decoration-color: rgba(54, 226, 207, 0.7);
+  text-decoration-color: rgba(212, 172, 98, 0.7);
 }
 .hud-item.done .hud-check {
   color: var(--amber);
@@ -934,7 +934,7 @@ body:has(.m2d) {
   cursor: pointer;
 }
 .hud-chip:hover {
-  border-color: rgba(54, 226, 207, 0.6);
+  border-color: rgba(212, 172, 98, 0.6);
 }
 .hud-chip b.on {
   color: var(--amber);
@@ -986,10 +986,10 @@ body:has(.m2d) {
   margin: 10px 0 0;
   max-width: 440px;
   padding-left: 12px;
-  border-left: 2px solid rgba(54, 226, 207, 0.6);
+  border-left: 2px solid rgba(212, 172, 98, 0.6);
   font-size: 15px;
   line-height: 1.45;
-  color: rgba(230, 238, 244, 0.85);
+  color: rgba(243, 235, 221, 0.85);
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
 }
 .location.compact .location-title {
@@ -1049,12 +1049,12 @@ body:has(.m2d) {
 .act.primary {
   background: var(--amber);
   border-color: var(--amber);
-  color: #03201c;
+  color: #1e140e;
 }
 .act.primary .key {
-  border-color: rgba(3, 32, 28, 0.6);
-  background: rgba(3, 32, 28, 0.12);
-  color: #03201c;
+  border-color: rgba(30, 20, 14, 0.6);
+  background: rgba(30, 20, 14, 0.12);
+  color: #1e140e;
 }
 .act.primary.pulse {
   animation: actPulse 2s ease-in-out infinite;
@@ -1065,16 +1065,16 @@ body:has(.m2d) {
 @keyframes actPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(54, 226, 207, 0);
+    box-shadow: 0 0 0 0 rgba(212, 172, 98, 0);
   }
   50% {
-    box-shadow: 0 0 0 7px rgba(54, 226, 207, 0.22);
+    box-shadow: 0 0 0 7px rgba(212, 172, 98, 0.22);
   }
 }
 @keyframes actFlash {
   50% {
     border-color: var(--amber);
-    box-shadow: 0 0 0 7px rgba(54, 226, 207, 0.22);
+    box-shadow: 0 0 0 7px rgba(212, 172, 98, 0.22);
   }
 }
 
@@ -1157,8 +1157,8 @@ body:has(.m2d) {
   gap: 4px;
   padding: 12px 34px;
   background: linear-gradient(90deg, transparent, rgba(10, 11, 13, 0.85) 20%, rgba(10, 11, 13, 0.85) 80%, transparent);
-  border-top: 1px solid rgba(54, 226, 207, 0.6);
-  border-bottom: 1px solid rgba(54, 226, 207, 0.6);
+  border-top: 1px solid rgba(212, 172, 98, 0.6);
+  border-bottom: 1px solid rgba(212, 172, 98, 0.6);
   opacity: 0;
   pointer-events: none;
   transition: opacity 300ms ease, transform 300ms ease;
@@ -1219,7 +1219,7 @@ body:has(.m2d) {
   max-width: 460px;
   font-size: 15px;
   line-height: 1.5;
-  color: rgba(230, 238, 244, 0.8);
+  color: rgba(243, 235, 221, 0.8);
 }
 .menu {
   list-style: none;
@@ -1240,13 +1240,13 @@ body:has(.m2d) {
   background: transparent;
   border: 0;
   border-left: 3px solid transparent;
-  color: rgba(230, 238, 244, 0.6);
+  color: rgba(243, 235, 221, 0.6);
   text-align: left;
   cursor: pointer;
   transition: background 150ms linear, color 150ms linear;
 }
 .menu-item.sel {
-  background: linear-gradient(90deg, rgba(54, 226, 207, 0.2), transparent);
+  background: linear-gradient(90deg, rgba(212, 172, 98, 0.2), transparent);
   border-left-color: var(--amber);
   color: var(--plaster);
 }
@@ -1281,7 +1281,7 @@ body:has(.m2d) {
 
 /* ---------- case-file reader (overrides) ---------- */
 .reader {
-  background: rgba(12, 13, 15, 0.95);
+  background: rgba(22, 14, 11, 0.95);
   border: 1px solid var(--line);
   border-top: 3px solid var(--amber);
 }
@@ -1327,8 +1327,8 @@ body:has(.m2d) {
   line-height: 1.65;
 }
 .reader-story span.now {
-  background: rgba(54, 226, 207, 0.18);
-  box-shadow: 0 0 0 2px rgba(54, 226, 207, 0.18);
+  background: rgba(212, 172, 98, 0.18);
+  box-shadow: 0 0 0 2px rgba(212, 172, 98, 0.18);
 }
 
 /* ---------- cutscene (overrides) ---------- */

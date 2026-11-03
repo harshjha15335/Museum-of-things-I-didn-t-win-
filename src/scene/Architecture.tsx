@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Instanced } from './Hall';
-import { C, ARCHWAYS, LOBBY_END, LOBBY_H } from './palette';
+import * as THREE from 'three';
+import { C, ARCHWAYS, LOBBY_END, LOBBY_H, EXHIBIT_POS } from './palette';
 
 /**
  * Architectural detail layer (v2.3), our own geometry in the spirit of the reference shots:
@@ -66,12 +67,12 @@ export function Architecture() {
     <group>
       {/* Columns */}
       <Instanced positions={d.shafts} scale={[0.5, 4.2, 0.5]} color={C.pilaster} roughness={0.6} metalness={0.3} />
-      <Instanced positions={d.flutes} scale={[0.05, 3.9, 0.03]} color="#0F1013" roughness={0.8} />
+      <Instanced positions={d.flutes} scale={[0.05, 3.9, 0.03]} color="#8E8473" roughness={0.8} />
       <Instanced positions={d.bases} scale={[0.78, 0.18, 0.78]} color={C.gunmetal} roughness={0.45} metalness={0.55} />
       <Instanced positions={d.capitals} scale={[0.8, 0.16, 0.8]} color={C.gunmetal} roughness={0.45} metalness={0.55} />
 
       {/* Wainscot, chair rail, crown moulding, cove light */}
-      <Instanced positions={d.wains} scale={[1.05, 0.72, 0.04]} color="#3A3E46" roughness={0.7} metalness={0.15} />
+      <Instanced positions={d.wains} scale={[1.05, 0.72, 0.04]} color="#3A2618" roughness={0.6} metalness={0.1} />
       <mesh position={[(MIN_X + MAX_X) / 2, 1.1, -3.95]}>
         <boxGeometry args={[MAX_X - MIN_X, 0.07, 0.1]} />
         <meshStandardMaterial color={C.gunmetal} roughness={0.4} metalness={0.6} />
@@ -82,12 +83,12 @@ export function Architecture() {
       </mesh>
       <mesh position={[(LOBBY_END + MAX_X) / 2, 4.73, -3.86]}>
         <boxGeometry args={[MAX_X - LOBBY_END, 0.02, 0.04]} />
-        <meshBasicMaterial color="#7F8FA3" toneMapped={false} />
+        <meshBasicMaterial color="#E8C48A" toneMapped={false} />
       </mesh>
 
       {/* Coffered ceiling + recessed warm lights */}
-      <Instanced positions={d.cofferX} scale={[0.16, 0.22, 12]} color="#262930" roughness={0.75} metalness={0.2} />
-      <Instanced positions={d.cofferZ} scale={[MAX_X - LOBBY_END, 0.22, 0.16]} color="#262930" roughness={0.75} metalness={0.2} />
+      <Instanced positions={d.cofferX} scale={[0.16, 0.22, 12]} color="#2A1C14" roughness={0.75} metalness={0.1} />
+      <Instanced positions={d.cofferZ} scale={[MAX_X - LOBBY_END, 0.22, 0.16]} color="#2A1C14" roughness={0.75} metalness={0.1} />
       <Instanced positions={d.recessed} scale={[0.42, 0.02, 0.42]} color="#E9DCC4" basic />
 
       {/* Lobby balcony at the atrium's mid-height */}
@@ -135,6 +136,7 @@ export function Architecture() {
         <meshBasicMaterial color={brass} />
       </mesh>
       <Instanced positions={d.inlayCross} scale={[0.05, 0.006, 7.4]} color={brass} basic />
+      <Ropes />
     </group>
   );
 }
@@ -145,7 +147,44 @@ function GlassCases({ positions }: { positions: V3[] }) {
       {positions.map((p, i) => (
         <mesh key={i} position={p} renderOrder={4}>
           <boxGeometry args={[0.58, 0.5, 0.58]} />
-          <meshStandardMaterial color="#C9D4E2" transparent opacity={0.14} roughness={0.05} metalness={0.2} depthWrite={false} />
+          <meshStandardMaterial color="#EADFC8" transparent opacity={0.14} roughness={0.05} metalness={0.2} depthWrite={false} />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
+/** Brass stanchions with sagging velvet ropes in front of each exhibit plinth (museum cue, v2.4). */
+function Ropes() {
+  const { posts, tops, ropes } = useMemo(() => {
+    const posts: V3[] = [];
+    const tops: V3[] = [];
+    const ropes: THREE.TubeGeometry[] = [];
+    for (const id of ['samsung', 'hackerrank', 'gsoc', 'deadline', 'vault'] as const) {
+      const [x, z] = EXHIBIT_POS[id];
+      const rz = z + 2.75;
+      const xs = [x - 1.9, x, x + 1.9];
+      xs.forEach((px) => {
+        posts.push([px, 0.48, rz]);
+        tops.push([px, 0.98, rz]);
+      });
+      for (let i = 0; i < xs.length - 1; i++) {
+        const a = new THREE.Vector3(xs[i], 0.94, rz);
+        const b = new THREE.Vector3(xs[i + 1], 0.94, rz);
+        const m = a.clone().lerp(b, 0.5).setY(0.7);
+        ropes.push(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, m, b), 24, 0.028, 8));
+      }
+    }
+    return { posts, tops, ropes };
+  }, []);
+  return (
+    <>
+      <Instanced positions={posts} scale={[0.05, 0.96, 0.05]} color={C.gilt} roughness={0.3} metalness={0.85} />
+      <Instanced positions={posts.map(([x, , z]) => [x, 0.02, z] as V3)} scale={[0.3, 0.04, 0.3]} color={C.gilt} roughness={0.3} metalness={0.85} />
+      <Instanced positions={tops} scale={[0.1, 0.1, 0.1]} color={C.gilt} roughness={0.3} metalness={0.85} />
+      {ropes.map((g, i) => (
+        <mesh key={i} geometry={g}>
+          <meshStandardMaterial color={C.velvet} roughness={0.85} />
         </mesh>
       ))}
     </>
