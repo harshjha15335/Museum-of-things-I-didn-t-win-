@@ -3,6 +3,8 @@ import { cutscene, cutsceneAudio, site } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { say, hush } from '../audio/voice';
 
+const LEAD_IN_MS = 600;
+
 /** Fetch the intro recording while the home screen is up, so the voice starts with the camera. */
 let preloaded: HTMLAudioElement | null = null;
 export function preloadIntro() {
@@ -52,6 +54,7 @@ export function Cutscene() {
 
     const audio = preloaded ?? new Audio(cutsceneAudio);
     preloaded = null;
+    audio.pause();
     audio.currentTime = 0;
     audio.muted = useMuseum.getState().muted;
     audioRef.current = audio;
@@ -83,17 +86,22 @@ export function Cutscene() {
       }, cutscene[i].duration * 1000);
     };
 
-    audio
-      .play()
-      .then(() => {
-        if (!stopped) follow();
-      })
-      .catch(() => {
-        if (stopped) return;
-        audioRef.current = null;
-        setSynthetic(true);
-        timed();
-      });
+    // Short lead-in before the voice: the opening word lands after the audio output has woken up (Bluetooth
+    // outputs drop the first few hundred ms) and the first frame is on screen.
+    const lead = window.setTimeout(() => {
+      if (stopped) return;
+      audio
+        .play()
+        .then(() => {
+          if (!stopped) follow();
+        })
+        .catch(() => {
+          if (stopped) return;
+          audioRef.current = null;
+          setSynthetic(true);
+          timed();
+        });
+    }, LEAD_IN_MS);
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') end();
@@ -101,6 +109,7 @@ export function Cutscene() {
     window.addEventListener('keydown', onKey);
     return () => {
       stopped = true;
+      window.clearTimeout(lead);
       window.clearTimeout(timer);
       cancelAnimationFrame(raf);
       audio.pause();

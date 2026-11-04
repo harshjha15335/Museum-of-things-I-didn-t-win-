@@ -1,4 +1,6 @@
 """Shared helpers for the narration mastering pipeline (48 kHz float mono throughout)."""
+import os
+
 import numpy as np
 import pyloudnorm as pyln
 import soundfile as sf
@@ -16,6 +18,23 @@ FILES = {
     "04-deadline": "7279248e-7c60-45cd-8770-5dac31551224.wav",
     "05-vault": "319a0619-44a1-4fe3-9e82-be72a28e6160.wav",
 }
+
+# Sections assembled from more than one upload (a re-recorded line patched into a take), as a list of
+# (upload in originals/, start s, end s or None, gain dB), each in that upload's own time, joined with 20 ms
+# equal-power crossfades at the given points. Used in place of FILES[name] by source().
+SPLICES = {}
+
+
+def source(vm, name):
+    """A section's source audio at 48 kHz: its upload, or the pieces listed in SPLICES."""
+    if name not in SPLICES:
+        return load(os.path.join(vm, "originals", FILES[name]))
+    parts = []
+    for f, a, b, gain_db in SPLICES[name]:
+        x = load(os.path.join(vm, "originals", f))
+        parts.append(x[int(a * SR) : None if b is None else int(b * SR)] * 10 ** (gain_db / 20))
+    return splice(parts)
+
 
 # What each take holds (from the words and the levels), written into recording_inventory.csv.
 NOTES = {

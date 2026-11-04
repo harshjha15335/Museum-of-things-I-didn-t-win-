@@ -415,7 +415,9 @@ export const exhibits: Exhibit[] = [
     ],
     quickLine: 'The vault: our best-kept secret, the Wispr Flow campaign I ran.',
     cards: [
-      { id: 'campaign', label: 'The campaign', body: 'TODO' }, // TODO Harsh: what it was, who it reached, when
+      // From Harsh, 4 Nov: a creative WhatsApp message asking people to use Wispr Flow, sent to 3-4 of his college
+      // groups. TODO: exact number of groups, date, the message itself (screenshot, names blurred).
+      { id: 'campaign', label: 'The campaign', body: 'I sent a creative WhatsApp message to a few of my college groups, inviting classmates to try Wispr Flow.' },
       { id: 'campaign-result', label: 'Results (verified only)', body: 'TODO' }, // TODO numbers with denominators
       { id: 'campaign-learned', label: 'What I learned', body: 'TODO' },
       { id: 'build-proof', label: 'Built by voice', body: 'Every change to this museum was asked for out loud through Wispr Flow.' },

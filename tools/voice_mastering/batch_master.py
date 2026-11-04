@@ -9,6 +9,7 @@ and clip gains are listed in scripts/common.py (FILES, EDITS), found from the wo
   1  analyze.py        recording_inventory.csv (levels, noise floor, clipping, bandwidth, hum, pauses)
   2  stage1_clean.py   Version A: 70 Hz high-pass, DeepFilterNet3 (capped in speech, guarded by spectral
                        gating where it would eat a word), retake cuts, trims -> cleaned/
+     intro_opening_fix.py  the intro's first phrase: lighter gating, faint "Lights" lifted (stopgap)
   3  re_enhance.py     Resemble Enhance on each A file (optional, ~6-10x realtime on 4 CPU cores)
   4  stage2_master.py  Version B (EQ, or Resemble + EQ) and C (de-ess, expander, compressor, -16 LUFS,
                        -1.5 dBTP true-peak limit), -18 LUFS video mix, WAV 24-bit + MP3 320k
@@ -51,6 +52,10 @@ for d in ("cleaned", "enhanced", "mastered/alternates", "video_mix_versions/alte
 S = lambda name: os.path.join(here, name)  # noqa: E731
 run(S("analyze.py"), os.path.join(vm, "reports", "recording_inventory.csv"), *[os.path.join(vm, "originals", f) for f in FILES.values()])
 run(S("stage1_clean.py"), vm, "variants2")
+from common import SPLICES  # noqa: E402
+
+if "00-intro" not in SPLICES:  # until "Lights down. Doors locked." is re-recorded and spliced in
+    run(S("intro_opening_fix.py"), vm)
 if not a.skip_resemble:
     env = dict(os.environ)
     stubs = os.path.join(here, "stubs")

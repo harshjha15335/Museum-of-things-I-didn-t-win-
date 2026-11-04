@@ -1,6 +1,6 @@
 """Stage 1 (Version A, clean): 48 kHz, gentle high-pass, DeepFilterNet3 denoise, then the edits.
 
-Usage: python stage1_clean.py <vm dir> [variants dir name, default "variants"]
+Usage: python stage1_clean.py <vm dir> [variants dir name, default "variants"] [--only=name,name]
 
 One edit plan is made per file in ORIGINAL time (retake cuts, an inserted breath, trim) and applied
 identically to every variant, so all variants stay sample-aligned and comparable:
@@ -29,10 +29,12 @@ import torch
 from df.enhance import enhance, init_df
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import EDITS, FILES, SR, frame_db, highpass, load, quietest_near, save, speech_segments, splice  # noqa: E402
+from common import EDITS, FILES, SPLICES, SR, frame_db, highpass, load, quietest_near, save, source, speech_segments, splice  # noqa: E402
 
-vm = sys.argv[1]
-VAR = os.path.join(vm, "work", sys.argv[2] if len(sys.argv) > 2 else "variants")
+pos = [a for a in sys.argv[1:] if not a.startswith("--")]
+ONLY = [n for a in sys.argv if a.startswith("--only=") for n in a[7:].split(",")]
+vm = pos[0]
+VAR = os.path.join(vm, "work", pos[1] if len(pos) > 1 else "variants")
 os.makedirs(VAR, exist_ok=True)
 model, df_state, _ = init_df()  # DeepFilterNet3 from the local cache
 assert df_state.sr() == SR
@@ -184,7 +186,11 @@ def apply_plan(x, steps):
 
 
 for name, src in FILES.items():
-    x = highpass(load(os.path.join(vm, "originals", src)), 70, order=4)
+    if ONLY and name not in ONLY:
+        continue
+    if name in SPLICES:
+        src = " + ".join(f"{f}[{a}:{b}]{'' if not g else f' {g:+.1f} dB'}" for f, a, b, g in SPLICES[name])
+    x = highpass(source(vm, name), 70, order=4)
     warm = room_tone(x)
     full, l24 = dfn(x, None, warm), dfn(x, 24.0, warm)
     lag = lag_samples(x, full)

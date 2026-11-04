@@ -1,6 +1,9 @@
 """Stage 2: Version B (enhanced) and Version C (master) from Version A (clean), with exports.
 
-Usage: python stage2_master.py <vm dir> [--no-a]
+Usage: python stage2_master.py <vm dir> [--no-a] [--only=name,name] [--reuse-eq] [--dsp-only]
+
+--only re-masters just those sections; with --reuse-eq it keeps the EQ curves saved in reports/eq_curves.json,
+so a re-recorded section matches the others without changing them. --dsp-only skips the Resemble path.
 
 Reads work/variants2/<name>_A.wav (stage1's Version A, before peak normalising) and, when all seven exist,
 enhanced/<name>_re_raw.wav (Resemble Enhance output from re_enhance.py, run on that A file). Two enhancement paths per file:
@@ -24,7 +27,9 @@ from dsp import apply_eq, compressor, deess, expander, finish, frames_db, match_
 
 vm = sys.argv[1]
 P = lambda *a: os.path.join(vm, *a)  # noqa: E731
-names = list(FILES)
+ONLY = [n for a in sys.argv if a.startswith("--only=") for n in a[7:].split(",")]
+REUSE_EQ, DSP_ONLY = "--reuse-eq" in sys.argv, "--dsp-only" in sys.argv
+names = [n for n in FILES if not ONLY or n in ONLY]
 
 
 def write(path, x, title):
@@ -58,15 +63,23 @@ def master_chain(b):
 
 
 A = {n: load(P("work", "variants2", f"{n}_A.wav")) for n in names}  # Version A source (stage1)
-curve_dsp, measured = match_eq_curve(list(A.values()))
 RE, re_lag = {}, {}
 for n in names:
     p = P("enhanced", f"{n}_re_raw.wav")
-    if os.path.exists(p):
+    if os.path.exists(p) and not DSP_ONLY:
         RE[n], re_lag[n] = align_to(load(p), A[n])
-curve_re = match_eq_curve(list(RE.values()), amount=0.5, clamp=3.0)[0] if len(RE) == len(names) else None
-json.dump({"measured_speech_spectrum_rel_500Hz": measured, "dsp_eq_db": curve_dsp, "resemble_eq_db": curve_re,
-           "resemble_lag_samples": re_lag}, open(P("reports", "eq_curves.json"), "w"), indent=1)
+if REUSE_EQ:
+    saved = json.load(open(P("reports", "eq_curves.json")))
+    curve_dsp = {int(k): v for k, v in saved["dsp_eq_db"].items()}
+    curve_re = {int(k): v for k, v in saved["resemble_eq_db"].items()} if saved.get("resemble_eq_db") and RE else None
+    if curve_re is not None and len(RE) < len(names):
+        curve_re = None
+else:
+    assert not ONLY, "--only needs --reuse-eq (the EQ is measured on the whole set)"
+    curve_dsp, measured = match_eq_curve(list(A.values()))
+    curve_re = match_eq_curve(list(RE.values()), amount=0.5, clamp=3.0)[0] if len(RE) == len(names) else None
+    json.dump({"measured_speech_spectrum_rel_500Hz": measured, "dsp_eq_db": curve_dsp, "resemble_eq_db": curve_re,
+               "resemble_lag_samples": re_lag}, open(P("reports", "eq_curves.json"), "w"), indent=1)
 print("EQ (dsp):", curve_dsp, flush=True)
 print("EQ (resemble):", curve_re, flush=True)
 
@@ -86,4 +99,6 @@ for n in names:
                    "V_lufs": round(lufs(v), 2), "V_true_peak": round(true_peak_db(v), 2)})
         log[f"{n}:{tag}"] = st
         print(n, tag, st, flush=True)
+if ONLY and os.path.exists(P("work", "stage2_log.json")):
+    log = {**json.load(open(P("work", "stage2_log.json"))), **log}
 json.dump(log, open(P("work", "stage2_log.json"), "w"), indent=1)
