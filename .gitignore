@@ -1,0 +1,6 @@
+node_modules
+dist
+*.local
+.DS_Store
+# The build spec PDF contains private reference screenshots; keep it local only.
+docs/*.pdf
