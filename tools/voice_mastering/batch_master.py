@@ -7,6 +7,7 @@ Input: originals/<upload>.wav (never modified). The section each upload belongs 
 and clip gains are listed in scripts/common.py (FILES, EDITS), found from the words themselves.
 
   1  analyze.py        recording_inventory.csv (levels, noise floor, clipping, bandwidth, hum, pauses)
+     make_patches.py   re-recorded single words joined into a take (common.PATCHES) -> patched/
   2  stage1_clean.py   Version A: 70 Hz high-pass, DeepFilterNet3 (capped in speech, guarded by spectral
                        gating where it would eat a word), retake cuts, trims -> cleaned/
      intro_opening_fix.py  first intro take only (not used since the 4 Nov retake): lighter gating on its
@@ -40,7 +41,7 @@ a = ap.parse_args()
 vm = os.path.abspath(a.vm)
 py = sys.executable
 sys.path.insert(0, here)
-from common import FILES, FIRST_TAKES, SPLICES, UNUSED  # noqa: E402
+from common import FILES, FIRST_TAKES, PATCHES, PICKUPS, SPLICES, UNUSED  # noqa: E402
 
 
 def run(*args, env=None):
@@ -51,8 +52,10 @@ def run(*args, env=None):
 for d in ("cleaned", "enhanced", "mastered/alternates", "video_mix_versions/alternates", "comparisons", "reports", "work"):
     os.makedirs(os.path.join(vm, d), exist_ok=True)
 S = lambda name: os.path.join(here, name)  # noqa: E731
-uploads = [*FILES.values(), *FIRST_TAKES.values(), *UNUSED]  # replaced and unused uploads are listed too
+uploads = [*FILES.values(), *FIRST_TAKES.values(), *UNUSED, *([PICKUPS] if PATCHES else [])]  # all uploads
 run(S("analyze.py"), os.path.join(vm, "reports", "recording_inventory.csv"), *[os.path.join(vm, "originals", f) for f in uploads])
+if PATCHES:
+    run(S("make_patches.py"), vm)
 run(S("stage1_clean.py"), vm, "variants2")
 if "00-intro" not in SPLICES and "00-intro" not in FIRST_TAKES:  # the first intro take's faint opening
     run(S("intro_opening_fix.py"), vm)

@@ -111,7 +111,7 @@ if __name__ == "__main__":
     import os
 
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from common import FILES, FIRST_TAKES, NOTES, UNUSED
+    from common import FILES, FIRST_TAKES, NOTES, PATCHES, PICKUPS, UNUSED
 
     section = {v: k for k, v in FILES.items()}
     section.update({v: f"{k} (first take)" for k, v in FIRST_TAKES.items()})
@@ -120,9 +120,14 @@ if __name__ == "__main__":
     for p in sys.argv[2:]:
         base = os.path.basename(p)
         sec = section.get(base, "")
+        note = UNUSED.get(base) or NOTES.get(sec, "")
         if base in UNUSED:
             sec = "unused"
-        rows.append({"section": sec, **analyze(p), "notes": UNUSED.get(base) or NOTES.get(sec, "")})
+        if base == PICKUPS:
+            sec = "pick-ups"
+            note = "4 Nov single-word pick-ups, patched into " + ", ".join(
+                f"{n} ({', '.join(p['word'] for p in ps)})" for n, ps in PATCHES.items()) + " by make_patches.py"
+        rows.append({"section": sec, **analyze(p), "notes": note})
     with open(out, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
         w.writeheader()

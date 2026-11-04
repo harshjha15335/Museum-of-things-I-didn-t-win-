@@ -196,16 +196,16 @@ export const exhibits: Exhibit[] = [
     },
     audio: 'audio/01-samsung.mp3',
     narration: [
-      { text: 'Case file one: ASTFLOW.', start: 0.25, end: 2.24 },
-      { text: 'Three friends. One Samsung PRISM GenAI hackathon. One idea:', start: 2.61, end: 6.62 },
-      { text: 'make huge JavaScript codebases readable to the developers stuck inside them.', start: 7.09, end: 11.29 },
-      { text: 'No more pasting snippets into chatbots and praying.', start: 11.94, end: 14.59 },
-      { text: 'My job: the user flow and retrieval.', start: 15.16, end: 17.39 },
-      { text: 'We built it during exams. Notes in one window, code in the other.', start: 17.88, end: 21.41 },
-      { text: "We were sure we'd qualify.", start: 21.9, end: 23.21 },
-      { text: "We didn't.", start: 23.5, end: 24.07 },
-      { text: "No reason was given, and I'm not going to make one up.", start: 24.51, end: 27.04 },
-      { text: 'But one question still follows me: did we validate as hard as we built?', start: 27.77, end: 31.74 },
+      { text: 'Case file one: ASTFLOW.', start: 0.25, end: 2.46 },
+      { text: 'Three friends. One Samsung PRISM GenAI hackathon. One idea:', start: 2.95, end: 6.96 },
+      { text: 'make huge JavaScript codebases readable to the developers stuck inside them.', start: 7.43, end: 11.61 },
+      { text: 'No more pasting snippets into chatbots and praying.', start: 12.26, end: 14.93 },
+      { text: 'My job: the user flow and retrieval.', start: 15.5, end: 17.73 },
+      { text: 'We built it during exams. Notes in one window, code in the other.', start: 18.22, end: 21.73 },
+      { text: "We were sure we'd qualify.", start: 22.22, end: 23.55 },
+      { text: "We didn't.", start: 23.82, end: 24.51 },
+      { text: "No reason was given, and I'm not going to make one up.", start: 25.01, end: 27.54 },
+      { text: 'But one question still follows me: did we validate as hard as we built?', start: 28.27, end: 32.24 },
     ],
     quickLine: 'ASTFLOW: built through exams, not selected. Takeaway: validate as hard as you build.',
     cards: [
@@ -369,7 +369,7 @@ export const exhibits: Exhibit[] = [
       { text: 'then cut features, then obsess over every detail on the last night.', start: 7.34, end: 10.81 },
       { text: 'So I changed one rule: what has to be finished today gets finished today.', start: 11.12, end: 14.9 },
       { text: "Hours don't count. Done does.", start: 15.39, end: 17.4 },
-      { text: 'And yes, I see the irony of saying this in a timed hiring challenge.', start: 17.93, end: 21.48 },
+      { text: 'And yes, I see the irony of saying this in a timed hiring challenge.', start: 17.93, end: 21.52 },
     ],
     quickLine: 'The deadline paradox, and the one daily rule that patched it.',
     cards: [
@@ -494,8 +494,8 @@ export const cutscene: { kicker?: string; line: string; start: number; duration:
 export const giftShop = {
   label: 'Gift shop',
   item: 'The $3,000 setup',
-  // Harsh's own answer, word for word (4 Nov)
-  body: "A MacBook Pro, because I build wherever the idea shows up: hostel room, library, lab break. Wispr, my AI tools, the code and a live 3D preview all running at once without the fans screaming. This museum was built on a machine that made me choose which of those to close. I'd rather spend the last day polishing details than waiting for builds.",
+  // Harsh's own answer (4 Nov); the credits and their last two sentences were added at his request
+  body: "A MacBook Pro, plus Claude Code and Codex credits. The MacBook because I build wherever the idea shows up: hostel room, library, lab break. Wispr, my AI tools, the code and a live 3D preview all running at once without the fans screaming. This museum was built on a machine that made me choose which of those to close. I'd rather spend the last day polishing details than waiting for builds. The credits because I don't just pitch campaigns, I build them: a landing page, a referral tool, a test like the Five-Minute Voice Test. With them, an idea becomes something people can try in days, not weeks.",
   price: '$3,000 · grant',
 };
 

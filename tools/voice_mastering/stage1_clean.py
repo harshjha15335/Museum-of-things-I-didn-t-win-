@@ -29,7 +29,7 @@ import torch
 from df.enhance import enhance, init_df
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import EDITS, FILES, SPLICES, SR, frame_db, highpass, load, quietest_near, save, source, speech_segments, splice  # noqa: E402
+from common import EDITS, FILES, PATCHES, SPLICES, SR, frame_db, highpass, load, quietest_near, save, source, speech_segments, splice  # noqa: E402
 
 pos = [a for a in sys.argv[1:] if not a.startswith("--")]
 ONLY = [n for a in sys.argv if a.startswith("--only=") for n in a[7:].split(",")]
@@ -188,6 +188,8 @@ def apply_plan(x, steps):
 for name, src in FILES.items():
     if ONLY and name not in ONLY:
         continue
+    if name in PATCHES:
+        src = f"patched/{name}.wav ({FILES[name]} + pick-ups: {', '.join(p['word'] for p in PATCHES[name])})"
     if name in SPLICES:
         src = " + ".join(f"{f}[{a}:{b}]{'' if not g else f' {g:+.1f} dB'}" for f, a, b, g in SPLICES[name])
     x = highpass(source(vm, name), 70, order=4)

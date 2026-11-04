@@ -25,24 +25,82 @@ FILES = {
 FIRST_TAKES = {"00-intro": "faa096a7-8a7e-4b9f-9c04-37ce2dfef073.wav"}
 
 # Uploads kept in originals/ but not used, and why (listed in recording_inventory.csv as "unused").
-UNUSED = {
-    "64859716-1487-4473-973d-e8aa78f483db.wav": (
-        "4 Nov pick-ups of single words ('We didn't.', 'ASTFLOW' twice, 'hiring challenge'), not spliced: on the same "
-        "words the tone differs from the Samsung and deadline takes by up to 10-20 dB in some octave bands, there is a "
-        "94/105 Hz hum the takes don't have, and the words are said as standalone words ('We' about 7 semitones "
-        "higher; 'hiring challenge' 13 dB louder and about 8 semitones higher than in its sentence), so the joins "
-        "would be heard. A full-room retake, like the intro, has no joins."
-    ),
+UNUSED = {}
+
+# 4 Nov pick-ups of single words, one upload: "We didn't." (1.7-2.6 s), "ASTFLOW" twice (3.8-4.8, 8.7-9.5),
+# "hiring challenge" (5.9-7.0). Patched into the takes by make_patches.py (see PATCHES).
+PICKUPS = "64859716-1487-4473-973d-e8aa78f483db.wav"
+
+# Re-recorded words patched into a take. make_patches.py builds patched/<name>.wav from the take and PICKUPS,
+# and source() uses it in place of the upload. Measured first (scripts/experiments/patch_*.py): the pick-up
+# has a 100.3 Hz hum line (+25 dB over its neighbours) and 36 Hz rumble the takes don't have, but once those
+# are notched out its background is no louder than the takes' (-53 vs -50 dBFS); its tone, compared on the
+# same vowels with pitch-adaptive envelopes, is within a few dB (a little fuller at 300-800 Hz, a little less
+# 1.25-1.6 kHz); and the words were said as standalone words: higher, rising, slower.
+# Each patch, all times in the file's own seconds:
+#   pick       the stretch of the pick-up used
+#   join       "pause": the take's word is replaced between the pauses on either side (host = the window
+#              holding that word); its extent is found from the level, the new word's onset ("onset", in the
+#              pick-up) is put where the old one began, and the joins are 40 ms crossfades in room tone.
+#              "closure": joined mid-phrase inside a stop closure (the silent moment before d / ch):
+#              host = (search from, search to, take resumes at); the quietest 5 ms in the search window is the
+#              join (10 ms crossfade), and the take resumes in the pause after the old word (40 ms).
+#   pitch      target intonation, (pick-up time, Hz), interpolated in semitones; the pick-up's own small
+#              pitch movements are kept on top. Applied with Praat PSOLA (the recording's own pitch periods
+#              re-spaced; formants unchanged), so the voice stays Harsh's: only the tune is moved.
+#   stretch    (a, b, factor): PSOLA duration change of a pick-up stretch (0.5 = half as long)
+#   cut        stretches of the pick-up removed after the pitch change (10 ms crossfades)
+#   level      (take span, dB): the new word's loudest 30 ms is set to that take span's loudest 30 ms + dB
+#   pick_level the pick-up span measured for that (its stressed vowel)
+#   gain       extra relative gain on pick-up spans, (a, b, dB), 30 ms ramps
+#   host_gain  gain on the take before the join, (a, b or None for "up to the join", dB), 40 ms ramps
+# Under the new word goes the take's own room tone (its quietest 0.3 s near the join, tiled), so the
+# background never changes across a join.
+PATCHES = {
+    "01-samsung": [
+        # Take: "ASTFLOW" rushed, its "FLOW" ~23 dB under "AST" (heard as "ask you"). Pick-up take 1 has a full
+        # "FLOW" (4 dB under "AST"; take 2's is as faint as the take's), but a long gap before it and a rise at
+        # the end, like a list: the gap is shortened, the rising tail compressed and the tune brought down to
+        # the take's falling shape.
+        {"word": "ASTFLOW", "join": "pause", "host": (1.70, 2.95), "pick": (3.80, 4.80), "onset": 3.845,
+         "pitch": [(3.86, 118), (3.98, 128), (4.06, 126), (4.47, 104), (4.56, 98), (4.63, 92), (4.70, 86),
+                   (4.76, 84)],
+         "stretch": [(4.64, 4.76, 0.5)], "cut": [(4.29, 4.41)],
+         "pick_level": (3.84, 4.06), "level": ((2.03, 2.25), 0.0), "gain": [(4.42, 4.80, -2.0)]},
+        # Take: "didn't" ~20 dB under "We", its n't barely there (heard as "We did."). The take's "We" is kept;
+        # the pick-up's "didn't" goes in from the d closure, its rising end (to 210 Hz) brought down to a
+        # falling statement and its long n shortened.
+        {"word": "didn't", "join": "closure", "host": (24.070, 24.102, 24.40), "pick": (2.105, 2.585),
+         "pitch": [(2.155, 116), (2.22, 111), (2.30, 103), (2.31, 101), (2.36, 97), (2.41, 93), (2.45, 90)],
+         "cut": [(2.41, 2.47)], "pick_level": (2.15, 2.30), "level": ((23.93, 24.08), -1.0),
+         "gain": [(2.30, 2.41, 2.0), (2.48, 2.585, 6.0)]},
+    ],
+    "04-deadline": [
+        # Take: "hiring challenge" fades out, "challenge" ~12 dB under "timed" and slurred (heard as "charge").
+        # The take's "hiring" is kept and lifted 4 dB so the line doesn't fade before the new "challenge",
+        # which goes in from the ch closure, pitched to keep falling from where "hiring" ends (~82 Hz).
+        {"word": "challenge", "join": "closure", "host": (25.765, 25.805, 26.26), "pick": (6.395, 7.02),
+         "pitch": [(6.50, 90), (6.60, 88), (6.70, 84), (6.85, 78), (6.95, 74)],
+         # Evened out: its open "cha" came out of mastering 2-3 dB over the lifted "hiring", and "-llenge" fell
+         # away fast (at -5 dB overall it was heard as "chat").
+         "pick_level": (6.48, 6.66), "level": ((25.44, 25.78), -2.5), "host_gain": [(25.40, None, 4.0)],
+         "gain": [(6.46, 6.60, -2.5), (6.63, 7.02, 3.0)]},
+    ],
 }
 
-# Sections assembled from more than one upload (a re-recorded line patched into a take), as a list of
-# (upload in originals/, start s, end s or None, gain dB), each in that upload's own time, joined with 20 ms
-# equal-power crossfades at the given points. Used in place of FILES[name] by source().
+# Sections assembled from more than one upload, as a list of (upload in originals/, start s, end s or None,
+# gain dB), each in that upload's own time, joined with 20 ms equal-power crossfades. Used by source().
 SPLICES = {}
 
 
 def source(vm, name):
-    """A section's source audio at 48 kHz: its upload, or the pieces listed in SPLICES."""
+    """A section's source audio at 48 kHz: its upload, its patched version (PATCHES, built by
+    make_patches.py), or the pieces listed in SPLICES."""
+    if name in PATCHES:
+        path = os.path.join(vm, "patched", f"{name}.wav")
+        if not os.path.exists(path):
+            raise SystemExit(f"{path} missing: run make_patches.py first")
+        return load(path)
     if name not in SPLICES:
         return load(os.path.join(vm, "originals", FILES[name]))
     parts = []
@@ -58,10 +116,11 @@ NOTES = {
     "00-intro (first take)": "replaced by the 4 Nov retake; the recorder was still starting during 'Lights' "
                              "(only a faint trace captured); 'down. Doors locked.' rushed and soft",
     "00-lobby": "clean single take",
-    "01-samsung": "single take; 'ASTFLOW' rushed; the 'n't' of 'We didn't' is weak",
+    "01-samsung": "single take; 'ASTFLOW' rushed and 'didn't' weak: both patched from the 4 Nov pick-ups",
     "02-hackerrank": "clean single take",
     "03-gsoc": "clean single take",
-    "04-deadline": "contains a false start: first take of 'Give me five days...' (cut, retake kept)",
+    "04-deadline": "contains a false start: first take of 'Give me five days...' (cut, retake kept); "
+                   "the final 'challenge' slurred: patched from the 4 Nov pick-ups",
     "05-vault": "app chime at 0-1.7 s, two takes of the opening, a false start 'We saved the...', and two takes of "
                 "'Inside... I build it' (first takes and the false start cut)",
 }
