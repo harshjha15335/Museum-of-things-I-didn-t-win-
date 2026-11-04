@@ -38,7 +38,8 @@ def source(vm, name):
 
 # What each take holds (from the words and the levels), written into recording_inventory.csv.
 NOTES = {
-    "00-intro": "opening cutscene; 'Lights down. Doors locked.' rushed and ~14 dB softer than the rest",
+    "00-intro": "opening cutscene; the recorder was still starting during 'Lights' (only a faint trace captured); "
+                "'down. Doors locked.' rushed and soft",
     "00-lobby": "clean single take",
     "01-samsung": "single take; 'ASTFLOW' rushed; the 'n't' of 'We didn't' is weak",
     "02-hackerrank": "clean single take",
