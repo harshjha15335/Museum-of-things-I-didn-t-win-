@@ -52,6 +52,20 @@ def match_eq_curve(signals, amount=0.7, clamp=6.0, boost_lo=200, boost_hi=7500, 
     return {fc: round(float(v), 2) for fc, v in zip(BANDS, g)}, {fc: round(v - M[500], 2) for fc, v in M.items()}
 
 
+def session_match_curve(x, ref, amount=0.7, clamp=4.0, boost_lo=100):
+    """For a retake recorded in another session: the same smoothed partial (70 %) match as match_eq_curve, but
+    toward `ref`, the first session's take of the same words, so the two sessions' tone matches. Added to the
+    set EQ for that section. No boosts below 100 Hz (rumble), at most 4 dB either way."""
+    M, R = band_levels(speech_only(x)), band_levels(speech_only(ref))
+    g = np.array([(R[fc] - R[500]) - (M[fc] - M[500]) for fc in BANDS])
+    g = np.convolve(np.r_[g[0], g, g[-1]], np.ones(3) / 3, "valid")
+    g = np.clip(g * amount, -clamp, clamp)
+    for i, fc in enumerate(BANDS):
+        if fc < boost_lo:
+            g[i] = min(g[i], 0.0)
+    return {fc: round(float(v), 2) for fc, v in zip(BANDS, g)}
+
+
 def apply_eq(x, curve):
     return fir_eq(x, list(curve.keys()), list(curve.values()))
 

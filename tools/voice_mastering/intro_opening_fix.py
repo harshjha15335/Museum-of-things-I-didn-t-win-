@@ -9,6 +9,8 @@ Here the words of the phrase come from the high-passed original with light spect
 in Version A, and the faint trace of "Lights" (0-0.27 s) is lifted. Everything after the phrase is Version A.
 Rewrites work/variants2/00-intro_A.wav; then run stage2_master.py --only=00-intro --reuse-eq.
 This is not a substitute for re-recording the line: "Lights" itself cannot be recovered.
+Used for the first take only: Harsh re-recorded the whole intro on 4 Nov (common.FIRST_TAKES), and the retake
+needs none of this.
 """
 import os
 import sys
@@ -17,7 +19,10 @@ import noisereduce as nr
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import SR, load, save  # noqa: E402
+from common import FIRST_TAKES, SPLICES, SR, load, save  # noqa: E402
+
+if "00-intro" in FIRST_TAKES or "00-intro" in SPLICES:
+    sys.exit("intro_opening_fix.py is for the first intro take only; the intro is now a retake or a splice")
 
 vm = sys.argv[1]
 lift_db = float(sys.argv[2]) if len(sys.argv) > 2 else 14.0

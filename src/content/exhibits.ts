@@ -465,13 +465,13 @@ export const experiment: {
 export const cutsceneAudio = 'audio/00-intro.mp3';
 
 export const cutscene: { kicker?: string; line: string; start: number; duration: number }[] = [
-  { kicker: 'After hours', line: 'Lights down. Doors locked. Welcome to the Harsh Jha Museum of Near Misses.', start: 0, duration: 4.9 },
-  { line: 'Other museums guard their trophies.', start: 5.25, duration: 3 },
-  { line: "This one guards the near-misses: hackathons, bets and plans that didn't land.", start: 7.55, duration: 5.11 },
-  { kicker: 'The curator', line: 'Harsh Jha. Computer science student, VIT Vellore.', start: 13.01, duration: 3.66 },
-  { line: "Known risk. Still hasn't learned to play it safe.", start: 16.67, duration: 3.43 },
-  { line: 'Five case files. Each one: a call I made, what broke, and what I kept.', start: 20.1, duration: 5.86 },
-  { kicker: 'House rule', line: 'Confidence is not evidence. So tonight, we go get the evidence.', start: 25.96, duration: 5.41 },
+  { kicker: 'After hours', line: 'Lights down. Doors locked. Welcome to the Harsh Jha Museum of Near Misses.', start: 0, duration: 4.49 },
+  { line: 'Other museums guard their trophies.', start: 4.95, duration: 3 },
+  { line: "This one guards the near-misses: hackathons, bets and plans that didn't land.", start: 7.03, duration: 4.89 },
+  { kicker: 'The curator', line: 'Harsh Jha. Computer science student, VIT Vellore.', start: 12.38, duration: 3.32 },
+  { line: "Known risk. Still hasn't learned to play it safe.", start: 15.72, duration: 3 },
+  { line: 'Five case files. Each one: a call I made, what broke, and what I kept.', start: 18.68, duration: 4.98 },
+  { kicker: 'House rule', line: 'Confidence is not evidence. So tonight, we go get the evidence.', start: 23.68, duration: 4.89 },
 ];
 
 /** Gift shop (the $3,000 "oddly specific setup" answer) and exit desk (logistics), shown in the vault file. */

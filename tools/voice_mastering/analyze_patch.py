@@ -8,6 +8,7 @@ noise floor, and each word's level against the clip's loudest speech. With a ref
 reference stretch's speech level, so the patch can be level-matched to the take it goes into.
 """
 import os
+import re
 import sys
 
 import numpy as np
@@ -44,7 +45,15 @@ for s in segs:
 bundle = torchaudio.pipelines.MMS_FA
 model = bundle.get_model(with_star=False).eval()
 tok, aligner = bundle.get_tokenizer(), bundle.get_aligner()
-words = [w.strip(".,!?").lower() for w in expected.split()]
+vocab = set(bundle.get_dict())
+SPOKEN = {"2026": "twenty twenty six", "1": "one", "2": "two", "3": "three", "4": "four", "5": "five"}
+# Same normalising as force_align.py: punctuation dropped, hyphens split, numbers spelled out.
+words = [
+    "".join(c for c in part.lower() if c in vocab)
+    for w in re.sub(r"[^A-Za-z0-9' -]+", " ", expected).replace("-", " ").split()
+    for part in SPOKEN.get(w, w).split()
+]
+words = [w for w in words if w]
 with torch.inference_mode():
     em, _ = model(torch.from_numpy(x16.astype(np.float32))[None])
 ratio = len(x16) / em.size(1) / 16000

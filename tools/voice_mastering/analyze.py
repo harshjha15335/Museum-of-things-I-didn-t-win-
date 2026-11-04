@@ -111,15 +111,18 @@ if __name__ == "__main__":
     import os
 
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from common import FILES, NOTES
+    from common import FILES, FIRST_TAKES, NOTES, UNUSED
 
     section = {v: k for k, v in FILES.items()}
+    section.update({v: f"{k} (first take)" for k, v in FIRST_TAKES.items()})
     out = sys.argv[1]
     rows = []
     for p in sys.argv[2:]:
         base = os.path.basename(p)
         sec = section.get(base, "")
-        rows.append({"section": sec, **analyze(p), "notes": NOTES.get(sec, "")})
+        if base in UNUSED:
+            sec = "unused"
+        rows.append({"section": sec, **analyze(p), "notes": UNUSED.get(base) or NOTES.get(sec, "")})
     with open(out, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
         w.writeheader()

@@ -10,13 +10,29 @@ SR = 48000
 
 # Section name -> original upload (names are upload ids, so sections are identified by content via ASR).
 FILES = {
-    "00-intro": "faa096a7-8a7e-4b9f-9c04-37ce2dfef073.wav",
+    "00-intro": "8a206f14-7c78-4d6f-a61e-68c82a06ce04.wav",  # full retake, 4 Nov
     "00-lobby": "80cfea39-f23c-41d5-94d2-bc26d345e4f0.wav",
     "01-samsung": "e2c0f8b4-d95d-4038-9c60-5bd17ab7ed7b.wav",
     "02-hackerrank": "6c5ad87a-c559-4187-9b3e-bdb66bf14c11.wav",
     "03-gsoc": "93845e5f-1168-4381-a19c-5c47213ed27a.wav",
     "04-deadline": "7279248e-7c60-45cd-8770-5dac31551224.wav",
     "05-vault": "319a0619-44a1-4fe3-9e82-be72a28e6160.wav",
+}
+
+# Sections re-recorded in a later session -> the first session's take of the same words (kept in originals/).
+# stage2 matches the retake's tone to it (dsp.session_match_curve, added to the set EQ), so a different mic
+# distance or placement doesn't make one exhibit sound unlike the rest; analyze.py lists it as replaced.
+FIRST_TAKES = {"00-intro": "faa096a7-8a7e-4b9f-9c04-37ce2dfef073.wav"}
+
+# Uploads kept in originals/ but not used, and why (listed in recording_inventory.csv as "unused").
+UNUSED = {
+    "64859716-1487-4473-973d-e8aa78f483db.wav": (
+        "4 Nov pick-ups of single words ('We didn't.', 'ASTFLOW' twice, 'hiring challenge'), not spliced: on the same "
+        "words the tone differs from the Samsung and deadline takes by up to 10-20 dB in some octave bands, there is a "
+        "94/105 Hz hum the takes don't have, and the words are said as standalone words ('We' about 7 semitones "
+        "higher; 'hiring challenge' 13 dB louder and about 8 semitones higher than in its sentence), so the joins "
+        "would be heard. A full-room retake, like the intro, has no joins."
+    ),
 }
 
 # Sections assembled from more than one upload (a re-recorded line patched into a take), as a list of
@@ -38,8 +54,9 @@ def source(vm, name):
 
 # What each take holds (from the words and the levels), written into recording_inventory.csv.
 NOTES = {
-    "00-intro": "opening cutscene; the recorder was still starting during 'Lights' (only a faint trace captured); "
-                "'down. Doors locked.' rushed and soft",
+    "00-intro": "opening cutscene; full retake recorded 4 Nov: one clean take, 'Lights' fully captured",
+    "00-intro (first take)": "replaced by the 4 Nov retake; the recorder was still starting during 'Lights' "
+                             "(only a faint trace captured); 'down. Doors locked.' rushed and soft",
     "00-lobby": "clean single take",
     "01-samsung": "single take; 'ASTFLOW' rushed; the 'n't' of 'We didn't' is weak",
     "02-hackerrank": "clean single take",
@@ -53,10 +70,15 @@ NOTES = {
 #  cut: remove [a, b) (boundaries are snapped to the quietest 10 ms within +-80 ms, 20 ms crossfade)
 #  pause: insert extra silence (s) at time t, to separate two phrases that run together
 EDITS = {
-    # "Lights down. Doors locked." is rushed (ASR hears "Ladies and gentlemen"): open the gap a little.
-    # It is also spoken about 14 dB softer than the next words (DeepFilterNet took it for noise, and 90 % gating
-    # thinned its consonants), so it gets +8 dB clip gain and only 50 % gating ("protect").
-    "00-intro": {"cuts": [], "pauses": [(0.87, 0.22)], "gain": [(0.40, 0.86, 8.0)], "protect": [(0.36, 0.90, 0.5)]},
+    # 4 Nov retake: one clean take, no cuts. DeepFilterNet turned "what I kept" into "what I count" without lowering
+    # it (so the level guard can't see it): heard that way in Version A, B, C and the DeepFilterNet-only variant,
+    # right in the raw take and the 80 % gated one. So that phrase gets the gated signal ("protect", 0.8; span from
+    # forced alignment). "Near Misses" and "Harsh Jha" also flip in whole-file recognition, but in short excerpts the
+    # raw take flips the same way, so that is the recogniser, not the processing.
+    # (The first take's rushed, soft "Lights down. Doors locked." needed a wider gap, +8 dB clip gain and 50 %
+    # gating: "pauses": [(0.87, 0.22)], "gain": [(0.40, 0.86, 8.0)], "protect": [(0.36, 0.90, 0.5)].)
+    "00-intro": {"cuts": [], "pauses": [],
+                 "protect": [(22.41, 23.20, 0.8)]},
     "00-lobby": {"cuts": [], "pauses": []},
     "01-samsung": {"cuts": [], "pauses": []},
     "02-hackerrank": {"cuts": [], "pauses": []},

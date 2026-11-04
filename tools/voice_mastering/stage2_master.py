@@ -4,6 +4,8 @@ Usage: python stage2_master.py <vm dir> [--no-a] [--only=name,name] [--reuse-eq]
 
 --only re-masters just those sections; with --reuse-eq it keeps the EQ curves saved in reports/eq_curves.json,
 so a re-recorded section matches the others without changing them. --dsp-only skips the Resemble path.
+A section re-recorded in a later session (common.FIRST_TAKES) also gets a session-match EQ toward the first
+session's take of the same words, added to the set EQ on both paths (reports/session_match_eq.json).
 
 Reads work/variants2/<name>_A.wav (stage1's Version A, before peak normalising) and, when all seven exist,
 enhanced/<name>_re_raw.wav (Resemble Enhance output from re_enhance.py, run on that A file). Two enhancement paths per file:
@@ -22,8 +24,10 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import FILES, SR, load, lufs, save, true_peak_db  # noqa: E402
-from dsp import apply_eq, compressor, deess, expander, finish, frames_db, match_eq_curve, mp3, peak_normalise  # noqa: E402
+from common import FILES, FIRST_TAKES, SR, load, lufs, save, true_peak_db  # noqa: E402
+from dsp import (  # noqa: E402
+    apply_eq, compressor, deess, expander, finish, frames_db, match_eq_curve, mp3, peak_normalise, session_match_curve,
+)
 
 vm = sys.argv[1]
 P = lambda *a: os.path.join(vm, *a)  # noqa: E731
@@ -82,14 +86,26 @@ else:
                "resemble_lag_samples": re_lag}, open(P("reports", "eq_curves.json"), "w"), indent=1)
 print("EQ (dsp):", curve_dsp, flush=True)
 print("EQ (resemble):", curve_re, flush=True)
+session_eq = {n: session_match_curve(load(P("originals", FILES[n])), load(P("originals", FIRST_TAKES[n])))
+              for n in names if n in FIRST_TAKES}
+for n, c in session_eq.items():
+    print(f"session match EQ ({n}, toward {FIRST_TAKES[n]}):", c, flush=True)
+if session_eq:
+    sp = P("reports", "session_match_eq.json")
+    json.dump({**(json.load(open(sp)) if os.path.exists(sp) else {}), **session_eq}, open(sp, "w"), indent=1)
+
+
+def eq_for(n, curve):
+    """The set curve, plus the session-match curve for a retake."""
+    return {fc: curve[fc] + session_eq[n].get(fc, 0.0) for fc in curve} if n in session_eq else curve
 
 log = {}
 for n in names:
     if "--no-a" not in sys.argv:
         write(P("cleaned", f"{n}_A_clean.wav"), peak_normalise(A[n]), f"{n} (A clean)")
-    paths = {"dsp": apply_eq(A[n], curve_dsp)}
+    paths = {"dsp": apply_eq(A[n], eq_for(n, curve_dsp))}
     if curve_re is not None:
-        paths["resemble"] = apply_eq(RE[n], curve_re)
+        paths["resemble"] = apply_eq(RE[n], eq_for(n, curve_re))
     for tag, b in paths.items():
         write(P("enhanced", f"{n}_B_enhanced_{tag}.wav"), peak_normalise(b), f"{n} (B enhanced, {tag})")
         c, v, st = master_chain(b)
