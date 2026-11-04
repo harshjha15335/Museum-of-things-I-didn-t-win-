@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { exhibits, exitDesk, exitPanel, giftShop, hud, site, type Card } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 
@@ -19,12 +20,16 @@ export function SlateReader() {
   const [transcript, setTranscript] = useState(false);
   const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const [lastLine, setLastLine] = useState(-1);
+  const [zoom, setZoom] = useState<number | null>(null);
+  const zoomRef = useRef<number | null>(null);
+  zoomRef.current = zoom;
   const ex = exhibits[station];
 
   useEffect(() => {
     setTranscript(false);
     setFlipped({});
     setLastLine(-1);
+    setZoom(null);
   }, [station]);
 
   useEffect(() => {
@@ -34,7 +39,9 @@ export function SlateReader() {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') useMuseum.getState().closeReader();
+      if (e.key !== 'Escape') return;
+      if (zoomRef.current !== null) setZoom(null); // close the enlarged screenshot first
+      else useMuseum.getState().closeReader();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -58,7 +65,9 @@ export function SlateReader() {
   const cards = ex.cards ?? [];
   // Deal one card per two narrated lines, all of them once the file is secured.
   const dealt = done ? cards.length : Math.min(cards.length, Math.floor((shown + 2) / 2));
-  const facts = ex.evidence.filter((e) => !e.todo);
+  const facts = ex.evidence.filter((e) => !e.todo && !e.img);
+  const proofs = ex.evidence.filter((e) => e.img);
+  const proofLinks = facts.filter((e) => e.url);
 
   return (
     <aside className="reader cf" aria-label={`${ex.kicker} case file`}>
@@ -125,10 +134,43 @@ export function SlateReader() {
         )}
         {cards.length > dealt && <p className="cf-hint">More evidence lands as the curator talks…</p>}
 
+        {proofs.length > 0 && (
+          <section className="cf-proof" aria-label={hud.proofLabel}>
+            <div className="cf-proof-head">
+              <span className="cf-proof-label">{hud.proofLabel}</span>
+              {proofLinks.map((l) => (
+                <a key={l.url} className="cf-proof-link" href={l.url} target="_blank" rel="noreferrer">
+                  {l.label} ↗
+                </a>
+              ))}
+            </div>
+            <div className="cf-proof-strip">
+              {proofs.map((p, i) => (
+                <button key={p.img} className="cf-proof-shot" aria-label={`${p.label}: enlarge`} onClick={() => setZoom(i)}>
+                  <img src={p.img} alt={`${p.label} screenshot`} loading="lazy" />
+                  <span>{p.label}</span>
+                </button>
+              ))}
+            </div>
+            <p className="cf-proof-hint">{hud.proofHint}</p>
+          </section>
+        )}
+
         {ex.id === 'vault' && done && <ExitDesk />}
         {!ex.audio && <p className="voice-note inline">{site.synthVoiceNote}</p>}
       </div>
 
+      {zoom !== null &&
+        proofs[zoom] &&
+        createPortal(
+          <div className="cf-lightbox" role="dialog" aria-label={proofs[zoom].label} onClick={() => setZoom(null)}>
+            <img src={proofs[zoom].img} alt={`${proofs[zoom].label} screenshot`} />
+            <button className="icon-btn cf-lightbox-close" aria-label={hud.proofClose} onClick={() => setZoom(null)}>
+              ✕
+            </button>
+          </div>,
+          document.body,
+        )}
     </aside>
   );
 }
@@ -178,7 +220,9 @@ const todoText = (v: string) => (v === 'TODO' ? <em className="todo">{site.todoL
 /** Gift shop ($3,000 setup) + exit desk (logistics and calls to action), at the end of the vault file. */
 function ExitDesk() {
   const url = typeof location !== 'undefined' ? location.href.split('#')[0] : '';
-  const linkedin = exitPanel.links.find((l) => l.label === 'LinkedIn')?.url;
+  const mail = `mailto:${exitPanel.email}`;
+  // video (once it has a URL), LinkedIn, GitHub: the spec's exit panel buttons (C10)
+  const links = exitPanel.links.filter((l) => l.url && !l.todo);
   const share = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
   const shareX = `https://x.com/intent/post?text=${encodeURIComponent(exitDesk.shareText)}&url=${encodeURIComponent(url)}`;
   return (
@@ -196,20 +240,35 @@ function ExitDesk() {
               <dd>{todoText(r.v)}</dd>
             </div>
           ))}
+          <div>
+            <dt>Email</dt>
+            <dd>
+              <a className="desk-mail" href={mail}>
+                {exitPanel.email}
+              </a>
+            </dd>
+          </div>
         </dl>
         <div className="desk-actions">
-          {linkedin && (
-            <a className="desk-btn primary" href={linkedin} target="_blank" rel="noreferrer">
-              {exitDesk.hire}
-            </a>
-          )}
-          <a className="desk-btn" href={share} target="_blank" rel="noreferrer">
-            {exitDesk.share} · LinkedIn
+          <a className="desk-btn primary" href={mail}>
+            {exitDesk.hire}
           </a>
-          <a className="desk-btn" href={shareX} target="_blank" rel="noreferrer">
+          {links.map((l) => (
+            <a key={l.label} className="desk-btn" href={l.url} target="_blank" rel="noreferrer">
+              {l.label}
+            </a>
+          ))}
+        </div>
+        <p className="desk-share">
+          {exitDesk.share}:{' '}
+          <a href={share} target="_blank" rel="noreferrer">
+            LinkedIn
+          </a>{' '}
+          ·{' '}
+          <a href={shareX} target="_blank" rel="noreferrer">
             X
           </a>
-        </div>
+        </p>
         <p className="desk-closing">{exitPanel.closing}</p>
       </section>
     </>

@@ -66,7 +66,7 @@ export function useControls() {
     let t0 = 0;
     let armed = false;
     const onTouchStart = (e: TouchEvent) => {
-      armed = e.touches.length === 1 && !(e.target as HTMLElement)?.closest?.('.reader, .hud-objective, .home, .cutscene');
+      armed = e.touches.length === 1 && !(e.target as HTMLElement)?.closest?.('.reader, .hud-objective, .home, .cutscene, .cf-lightbox');
       tx = e.touches[0].clientX;
       ty = e.touches[0].clientY;
       t0 = e.timeStamp;

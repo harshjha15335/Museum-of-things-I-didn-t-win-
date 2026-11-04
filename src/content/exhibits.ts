@@ -56,7 +56,8 @@ export type Exhibit = {
   narration: Cue[];
   quickLine: string;
   cards?: Card[]; // lecterns, dossier, checklist, story-turn
-  evidence: { label: string; url?: string; todo?: boolean }[];
+  /** img: a screenshot shown as tap-to-enlarge proof in the case file (people's names and numbers blurred). */
+  evidence: { label: string; url?: string; todo?: boolean; img?: string }[];
   /** Short words painted onto 3D props (signs, labels). Not body copy. */
   props?: Record<string, string>;
 };
@@ -145,6 +146,9 @@ export const hud = {
   audioOn: 'Audio',
   musicLabel: 'Music',
   stopRecon: 'Take control',
+  proofLabel: 'Proof',
+  proofHint: 'Tap a screenshot to enlarge. Other members\' names and numbers are blurred.',
+  proofClose: 'Close',
 };
 
 export const exhibits: Exhibit[] = [
@@ -402,7 +406,7 @@ export const exhibits: Exhibit[] = [
       pushIn: { pos: [74.9, 1.75, 4.3], target: [76.9, 1.65, -3.0] },
     },
     audio: 'audio/05-vault.mp3',
-    // Campaign specifics come from Harsh (TODO). Only verified numbers, each with its denominator (spec Part I).
+    // Campaign facts are Harsh's own (4 Nov), each number with its denominator (spec Part I).
     narration: [
       { text: 'Case file five. The vault.', start: 0.19, end: 1.8 },
       { text: 'Every museum keeps one thing off the main floor. This is ours: our best-kept secret.', start: 2.27, end: 7.06 },
@@ -415,15 +419,27 @@ export const exhibits: Exhibit[] = [
     ],
     quickLine: 'The vault: our best-kept secret, the Wispr Flow campaign I ran.',
     cards: [
-      // From Harsh, 4 Nov: a creative WhatsApp message asking people to use Wispr Flow, sent to 3-4 of his college
-      // groups. TODO: exact number of groups, date, the message itself (screenshot, names blurred).
-      { id: 'campaign', label: 'The campaign', body: 'I sent a creative WhatsApp message to a few of my college groups, inviting classmates to try Wispr Flow.' },
-      { id: 'campaign-result', label: 'Results (verified only)', body: 'TODO' }, // TODO numbers with denominators
+      // From Harsh, 4 Nov: group sizes, form responses per group and about 13 WhatsApp replies. He chose to leave out
+      // the per-question breakdown and quotes (no form export behind them). Screenshots in public/evidence/.
+      {
+        id: 'campaign',
+        label: 'The campaign',
+        body: 'One message, "The Five-Minute Voice Test", in four VIT WhatsApp groups with 3,921 members: try Wispr Flow once on a lab paragraph or a WhatsApp message, then fill in a 2-minute form.',
+      },
+      {
+        id: 'campaign-result',
+        label: 'Results',
+        body: '253 of 3,921 members filled in the form (6.5%): CSE Squad 97 of 1,000, Pre Graduates 71 of 994, Freshers 2028 44 of 1,011, CO\'28 Helpdesk 41 of 916. About 13 also wrote back on WhatsApp to say how good it was.',
+      },
       { id: 'campaign-learned', label: 'What I learned', body: 'TODO' },
       { id: 'build-proof', label: 'Built by voice', body: 'Every change to this museum was asked for out loud through Wispr Flow.' },
     ],
     evidence: [
-      { label: 'Campaign posts, screenshots or links', todo: true },
+      { label: 'CSE Squad', img: 'evidence/campaign-cse-squad.jpg' },
+      { label: 'Pre Graduates', img: 'evidence/campaign-pre-graduates.jpg' },
+      { label: 'Freshers group 2028', img: 'evidence/campaign-freshers-2028.jpg' },
+      { label: "CO'28 Helpdesk 2.0", img: 'evidence/campaign-co28-helpdesk.jpg' },
+      { label: 'The form I used (questions only)', url: 'https://docs.google.com/forms/d/e/1FAIpQLScauIJ7cY41B0H0YFjCyM-Gy7c6gX-diepf7OIvEG2q9JixJQ/viewform?usp=header' },
       { label: 'Clips of Harsh dictating the build via Wispr Flow', todo: true },
     ],
     props: {
@@ -478,16 +494,17 @@ export const cutscene: { kicker?: string; line: string; start: number; duration:
 export const giftShop = {
   label: 'Gift shop',
   item: 'The $3,000 setup',
-  body: 'TODO', // TODO Harsh: his oddly specific setup requirement
+  // Harsh's own answer, word for word (4 Nov)
+  body: "A MacBook Pro, because I build wherever the idea shows up: hostel room, library, lab break. Wispr, my AI tools, the code and a live 3D preview all running at once without the fans screaming. This museum was built on a machine that made me choose which of those to close. I'd rather spend the last day polishing details than waiting for builds.",
   price: '$3,000 · grant',
 };
 
 export const exitDesk = {
   label: 'Exit desk',
   rows: [
-    { k: 'Role', v: 'TODO' }, // TODO: Internship / Full-time / Either
-    { k: 'Earliest start', v: 'TODO' },
-    { k: 'Bangalore', v: 'TODO' }, // TODO: based there / willing to travel
+    { k: 'Role', v: 'Internship' },
+    { k: 'Earliest start', v: 'May 2027' },
+    { k: 'Bangalore', v: 'Based in Mumbai, open to moving' },
     { k: 'Built', v: '28 Oct – 4 Nov 2026, by voice' },
   ],
   hire: 'Hire the curator',
@@ -498,11 +515,11 @@ export const exitDesk = {
 export const exitPanel = {
   closing: "THIS MUSEUM HAS NO ENDING YET. THAT'S WHY I'M APPLYING.",
   links: [
-    { label: 'Watch the 3-minute video', todo: true }, // TODO URL
+    { label: 'Watch the 3-minute video', todo: true }, // TODO URL (shown only once it has one)
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/harsh-jha-5a828b327' },
     { label: 'GitHub', url: 'https://github.com/harshjha15335' },
-    { label: 'Contact', todo: true }, // TODO
   ] as { label: string; url?: string; todo?: boolean }[],
+  email: 'harsh.jha2024a@vitstudent.ac.in', // Harsh is fine publishing it (4 Nov)
 };
 
 export const countedExhibits = exhibits.filter((e) => e.counted);
