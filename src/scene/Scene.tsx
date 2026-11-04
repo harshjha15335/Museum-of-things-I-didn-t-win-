@@ -12,6 +12,7 @@ import { Samsung } from './exhibits/Samsung';
 import { Placeholder } from './exhibits/Placeholder';
 import { Vault } from './exhibits/Vault';
 import { Slate } from './Slate';
+import { quality } from './quality';
 
 /** Weak-GPU detection (spec F4): first 60 frames under 30 fps → no shadows, no cones. */
 function PerfMonitor() {
@@ -66,9 +67,9 @@ export function Scene() {
   return (
     <Canvas
       shadows={{ type: THREE.PCFSoftShadowMap }}
-      dpr={[1, 1.5]}
+      dpr={lowPower ? 1 : quality.dpr}
       camera={{ fov: initial.fov, near: 0.1, far: 120, position: initial.pos }}
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: quality.antialias, powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.toneMappingExposure = 0.95;

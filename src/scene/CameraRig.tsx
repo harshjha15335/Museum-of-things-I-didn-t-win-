@@ -14,6 +14,19 @@ gsap.ticker.lagSmoothing(0);
 
 const v = (a: [number, number, number]) => new THREE.Vector3(...a);
 
+/**
+ * Stations are framed for a landscape screen. three.js keeps the vertical FOV fixed, so a portrait
+ * phone would see a narrow slice of each room. Widen the vertical FOV as the screen narrows, part way
+ * toward keeping the landscape width (fully would be a fisheye), capped at 74°.
+ */
+const FRAMED_ASPECT = 16 / 9;
+function fitFov(fov: number, aspect: number) {
+  if (aspect >= FRAMED_ASPECT * 0.85) return fov;
+  const k = Math.pow((FRAMED_ASPECT * 0.85) / aspect, 0.62);
+  const wide = (2 * Math.atan(Math.tan((fov * Math.PI) / 360) * k) * 180) / Math.PI;
+  return Math.min(74, Math.max(fov, wide));
+}
+
 function stationView(ex: Exhibit, pushed: boolean) {
   const s = ex.station;
   if (!pushed) return { pos: v(s.pos), target: v(s.target), fov: s.fov };
@@ -183,7 +196,7 @@ export function CameraRig() {
     };
   }, []);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock, size }) => {
     const s = useMuseum.getState();
     const calm = s.reducedMotion;
     const idle = !s.traveling && !calm && !s.cutscene;
@@ -199,8 +212,9 @@ export function CameraRig() {
     cam.position.set(pos.current.x, pos.current.y + dip.current + drift, pos.current.z);
     lookTmp.current.copy(target.current).add(parallax.current);
     cam.lookAt(lookTmp.current);
-    if (Math.abs(cam.fov - fov.current) > 0.01) {
-      cam.fov = fov.current;
+    const fit = fitFov(fov.current, size.width / Math.max(1, size.height));
+    if (Math.abs(cam.fov - fit) > 0.01) {
+      cam.fov = fit;
       cam.updateProjectionMatrix();
     }
   });

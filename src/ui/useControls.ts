@@ -59,18 +59,29 @@ export function useControls() {
       else s.goBack();
     };
 
+    // Swipe left/right on the scene = next/previous room. Swipes that start inside a panel
+    // (case file cards, the objective list) belong to that panel, and pinches are ignored.
     let tx = 0;
     let ty = 0;
+    let t0 = 0;
+    let armed = false;
     const onTouchStart = (e: TouchEvent) => {
+      armed = e.touches.length === 1 && !(e.target as HTMLElement)?.closest?.('.reader, .hud-objective, .home, .cutscene');
       tx = e.touches[0].clientX;
       ty = e.touches[0].clientY;
+      t0 = e.timeStamp;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 1) armed = false;
     };
     const onTouchEnd = (e: TouchEvent) => {
       const s = S();
-      if (!s.started || s.cutscene) return;
+      if (!armed || !s.started || s.cutscene) return;
+      armed = false;
       const dx = e.changedTouches[0].clientX - tx;
       const dy = e.changedTouches[0].clientY - ty;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      const fast = e.timeStamp - t0 < 1000; // a flick, not a slow drag
+      if (fast && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
         if (s.mode === 'quick') s.stopTour();
         if (dx < 0) s.goNext();
         else s.goBack();
@@ -80,11 +91,13 @@ export function useControls() {
     window.addEventListener('keydown', onKey);
     window.addEventListener('wheel', onWheel, { passive: true });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
     };
   }, []);

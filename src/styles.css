@@ -1905,3 +1905,478 @@ body:has(.m2d) {
     transition: none;
   }
 }
+
+/* =========================================================================
+   Phones (mobile audit, 4 Nov). Touch first: thumb-sized buttons, no key caps,
+   safe areas for notches and the home bar, the case file as a bottom sheet in
+   portrait and a side panel in landscape. Desktop layout above is unchanged.
+   ========================================================================= */
+:root {
+  --st: env(safe-area-inset-top, 0px);
+  --sr: env(safe-area-inset-right, 0px);
+  --sb: env(safe-area-inset-bottom, 0px);
+  --sl: env(safe-area-inset-left, 0px);
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* no pinch-zoom / page pan on the 3D scene; taps on buttons fire without the double-tap delay */
+.canvas-wrap {
+  touch-action: none;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+.reader,
+.cf-body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.m2d {
+  height: 100%;
+  overflow-y: auto;
+  padding-left: max(24px, var(--sl));
+  padding-right: max(24px, var(--sr));
+  padding-bottom: var(--sb);
+}
+
+/* objective header is a button (folds the list on phones); looks unchanged on desktop */
+.hud-fold {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+.hud-fold .hud-label {
+  width: 100%;
+}
+.hud-fold .hud-objective-line {
+  display: block;
+}
+.hud-caret {
+  display: none;
+}
+.chip-icon {
+  display: none;
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- touch: no keyboard key caps; arrows stay as plain icons ---------- */
+@media (hover: none) and (pointer: coarse) {
+  .key {
+    display: none;
+  }
+  .key[data-k='←'],
+  .key[data-k='→'] {
+    display: inline-grid;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--ui);
+    font-size: 20px;
+    color: inherit;
+  }
+  .act {
+    padding: 0 16px;
+  }
+  .world-prompt {
+    min-height: 44px;
+    padding: 6px 16px;
+  }
+  /* hover lifts stick after a tap on touch screens */
+  .flip:hover:not(.flipped) .flip-inner {
+    transform: none;
+  }
+  .flip-cta {
+    font-size: 11px;
+  }
+}
+
+/* ---------- shared phone rules: portrait and landscape ---------- */
+@media (max-width: 760px), (max-height: 500px) and (orientation: landscape) {
+  .hud-objective {
+    top: calc(10px + var(--st));
+    left: calc(10px + var(--sl));
+    width: auto;
+    max-width: min(300px, calc(100vw - 140px - var(--sl) - var(--sr)));
+    padding: 8px 12px 8px 10px;
+  }
+  .hud-fold {
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .hud-label {
+    font-size: 11px;
+  }
+  .hud-caret {
+    display: inline;
+    margin-left: 8px;
+    color: var(--plaster);
+    transition: transform 200ms ease;
+  }
+  .hud-objective.open .hud-caret {
+    transform: rotate(180deg);
+  }
+  .hud-objective-line {
+    font-size: 17px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hud-list {
+    display: none;
+  }
+  .hud-objective.open {
+    background: rgba(10, 11, 13, 0.97);
+    z-index: 5;
+  }
+  .hud-objective.open .hud-list {
+    display: block;
+  }
+  .hud-item {
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  .hud-status {
+    top: calc(10px + var(--st));
+    right: calc(10px + var(--sr));
+    gap: 6px;
+  }
+  .hud-chip[aria-pressed] {
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+    justify-content: center;
+    color: var(--amber);
+  }
+  .hud-chip.is-off {
+    color: var(--alarm);
+  }
+  .hud-chip {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .chip-icon {
+    display: block;
+  }
+  .chip-text {
+    display: none;
+  }
+
+  .actions {
+    right: calc(10px + var(--sr));
+    bottom: calc(10px + var(--sb));
+    flex-direction: row;
+    align-items: stretch;
+    width: auto;
+    gap: 8px;
+  }
+  .act {
+    min-height: 48px;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .act.back {
+    order: -1;
+    min-width: 48px;
+    padding: 0;
+  }
+  .act.back .act-label {
+    display: none;
+  }
+  .act.next {
+    order: 9;
+  }
+  .act.replay .act-label {
+    display: none;
+  }
+  .act.replay {
+    min-width: 48px;
+    padding: 0;
+  }
+  .act.replay::before {
+    content: '↻';
+    font-family: var(--ui);
+    font-size: 22px;
+  }
+  /* the case file has its own close button on phones */
+  .act.close {
+    display: none;
+  }
+
+  /* where you are: under the objective, out of the way of captions and buttons */
+  .location {
+    top: calc(76px + var(--st));
+    bottom: auto;
+    left: calc(12px + var(--sl));
+    max-width: calc(100vw - 24px - var(--sl) - var(--sr));
+  }
+  .location-number {
+    font-size: 14px;
+  }
+  .location-title {
+    font-size: 30px;
+  }
+  .location-bridge {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .subs {
+    bottom: calc(72px + var(--sb));
+    width: calc(100vw - 24px - var(--sl) - var(--sr));
+    min-width: 0;
+  }
+  .subs-line {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .objective-toast {
+    top: 32%;
+    padding: 10px 22px;
+  }
+  .objective-toast-main {
+    font-size: 22px;
+    white-space: nowrap;
+  }
+
+  .footer {
+    left: calc(12px + var(--sl));
+    right: calc(12px + var(--sr));
+    bottom: calc(6px + var(--sb));
+    font-size: 10.5px;
+    text-align: center;
+  }
+  .app.is-started .footer {
+    display: none;
+  }
+
+  .cf-close {
+    width: 44px;
+    height: 44px;
+    top: 6px;
+    right: 6px;
+    font-size: 18px;
+  }
+  .cf-title {
+    font-size: 26px;
+    margin-right: 48px;
+  }
+  .cf-line {
+    font-size: 21px;
+    min-height: 2.4em;
+  }
+  .cf-toggle {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .flip-label.small {
+    font-size: 11px;
+  }
+  .flip-body {
+    font-size: 14px;
+  }
+  .redacted em {
+    font-size: 11px;
+  }
+  .cf-hint {
+    font-size: 11.5px;
+  }
+  .world-prompt {
+    font-size: 15px;
+  }
+
+  .cut-skip {
+    min-height: 44px;
+    right: calc(12px + var(--sr));
+  }
+}
+
+/* ---------- portrait phones (and narrow windows) ---------- */
+@media (max-width: 760px) and (min-height: 501px) {
+  .home-inner {
+    width: calc(100vw - 32px - var(--sl) - var(--sr));
+    top: 47%;
+  }
+  .home-title {
+    font-size: clamp(44px, 14vw, 76px);
+    line-height: 0.9;
+  }
+  .home-hook {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .home-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .home-btn {
+    min-height: 56px;
+    font-size: 19px;
+  }
+
+  /* bottom bar: [←] [main action] [next →], full width for thumbs */
+  .actions {
+    left: calc(10px + var(--sl));
+  }
+  .act.primary {
+    flex: 1;
+  }
+  .act.next {
+    margin-left: auto;
+  }
+  .actions:not(:has(.primary)) .act.next {
+    flex: 1;
+  }
+
+  /* case file: bottom sheet above the button bar */
+  .reader,
+  .reader.cf {
+    top: auto;
+    left: calc(8px + var(--sl));
+    right: calc(8px + var(--sr));
+    bottom: calc(66px + var(--sb));
+    width: auto;
+    max-height: calc(100% - 140px - var(--st) - var(--sb));
+    padding: 14px 14px 10px;
+  }
+
+  .cut-card {
+    left: calc(20px + var(--sl));
+    right: calc(20px + var(--sr));
+    max-width: none;
+  }
+  .cut-line {
+    font-size: clamp(26px, 8vw, 36px);
+  }
+  .cut-progress {
+    left: calc(20px + var(--sl));
+  }
+  .cut-skip {
+    top: calc(11vh + 12px);
+    bottom: auto;
+  }
+}
+
+/* ---------- landscape phones ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .home-inner {
+    top: 50%;
+  }
+  .home-title {
+    font-size: clamp(34px, 13vh, 62px);
+  }
+  .home-hook {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  .home-actions {
+    margin-top: 16px;
+  }
+  .home-btn {
+    min-height: 48px;
+    padding: 10px 22px;
+    font-size: 17px;
+  }
+
+  .location {
+    top: calc(70px + var(--st));
+    max-width: min(420px, 50vw);
+  }
+  .location-title {
+    font-size: 24px;
+  }
+  /* short screens: the one-line bridge would sit on top of the exhibit */
+  .location-bridge {
+    display: none;
+  }
+  .subs {
+    bottom: calc(66px + var(--sb));
+    width: min(620px, calc(100vw - 32px - var(--sl) - var(--sr)));
+  }
+  .subs-line {
+    font-size: 15px;
+  }
+  .objective-toast {
+    top: 22%;
+  }
+
+  /* case file: right-hand panel, full height; the audio chips step aside while it's open */
+  .reader,
+  .reader.cf {
+    top: calc(8px + var(--st));
+    right: calc(8px + var(--sr));
+    bottom: calc(66px + var(--sb));
+    left: auto;
+    width: min(420px, 54vw);
+    padding: 12px 14px 10px;
+  }
+  .app.is-reading .hud-status {
+    display: none;
+  }
+  .app.is-reading .hud-objective {
+    max-width: calc(46vw - 30px - var(--sl));
+  }
+  .cf-title {
+    font-size: 22px;
+  }
+  .cf-line {
+    font-size: 18px;
+  }
+
+  .letterbox {
+    height: 9vh;
+  }
+  .cut-card {
+    left: calc(24px + var(--sl));
+    bottom: calc(9vh + 34px);
+    max-width: calc(100vw - 200px - var(--sl) - var(--sr));
+  }
+  .cut-line {
+    font-size: clamp(20px, 7vh, 32px);
+  }
+  .cut-progress {
+    left: calc(24px + var(--sl));
+    bottom: calc(9vh + 14px);
+  }
+  .cut-skip {
+    bottom: calc(9vh + 10px);
+  }
+}
+
+/* ---------- very small phones (iPhone SE 1st gen, 320 px) ---------- */
+@media (max-width: 360px) {
+  .hud-objective-line {
+    font-size: 15px;
+  }
+  .location-title {
+    font-size: 26px;
+  }
+  .act {
+    font-size: 15px;
+    padding: 0 12px;
+  }
+  .home-btn {
+    font-size: 17px;
+  }
+}

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { exhibits, site, type ExhibitId } from '../content/exhibits';
+import { isLowEnd } from '../scene/quality';
 
 /**
  * Exhibit state machine (spec C5).
@@ -90,7 +91,7 @@ export const useMuseum = create<State>((set, get) => ({
   toast: null,
   nextPulse: 0,
   reducedMotion: prefersReducedMotion(),
-  lowPower: false,
+  lowPower: isLowEnd,
   hoverArtifact: false,
   cutscene: false,
   readerOpen: false,

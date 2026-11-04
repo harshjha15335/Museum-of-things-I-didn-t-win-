@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { cutscene, cutsceneAudio, site } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { say, hush } from '../audio/voice';
+import { trackVoice } from '../audio/lifecycle';
 
 const LEAD_IN_MS = 600;
 
@@ -58,6 +59,7 @@ export function Cutscene() {
     audio.currentTime = 0;
     audio.muted = useMuseum.getState().muted;
     audioRef.current = audio;
+    trackVoice(audio);
 
     // Recording: the card on screen is the last one whose line has started.
     const follow = () => {

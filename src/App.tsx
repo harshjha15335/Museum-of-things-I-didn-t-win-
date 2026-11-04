@@ -12,6 +12,7 @@ import { SlateReader } from './ui/SlateReader';
 import { useControls } from './ui/useControls';
 import { Museum2D } from './fallback/Museum2D';
 import { useMuseum } from './state/store';
+import { isTouch } from './scene/quality';
 
 function hasWebGL() {
   try {
@@ -24,16 +25,17 @@ function hasWebGL() {
 
 export default function App() {
   const webgl = useMemo(hasWebGL, []);
-  // Spec F6: under 768px wide, or without WebGL, use the 2D museum.
-  const force2d = useMemo(() => new URLSearchParams(location.search).has('2d') || window.innerWidth < 768, []);
+  // Phones get the full 3D museum (tuned in scene/quality.ts); the text edition is the no-WebGL fallback or ?2d.
+  const force2d = useMemo(() => new URLSearchParams(location.search).has('2d'), []);
   const started = useMuseum((s) => s.started);
   const hover = useMuseum((s) => s.hoverArtifact);
+  const reading = useMuseum((s) => s.readerOpen);
   useControls();
 
   if (!webgl || force2d) return <Museum2D />;
 
   return (
-    <div className={`app ${started ? 'is-started' : ''} ${hover ? 'is-hover' : ''}`}>
+    <div className={`app ${started ? 'is-started' : ''} ${hover ? 'is-hover' : ''} ${reading ? 'is-reading' : ''} ${isTouch ? 'is-touch' : ''}`}>
       <div className="canvas-wrap">
         <Scene />
       </div>

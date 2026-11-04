@@ -3,6 +3,7 @@ import { exhibits, hud } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { startMusic } from '../audio/music';
 import { primeNarration } from '../audio/narration';
+import { unlockAudioSession } from '../audio/lifecycle';
 import { preloadIntro, primeIntro } from './Cutscene';
 
 /** Home screen: one big title, one line, two buttons (Harsh, 3 Nov: "big and clear, not a lot of text"). */
@@ -17,6 +18,7 @@ export function StartScreen() {
   }, [started]);
   useEffect(() => preloadIntro(), []);
   const start = (mode: 'full' | 'quick') => {
+    unlockAudioSession(); // iOS: music keeps playing with the silent switch on, like the voice does
     startMusic(); // first user gesture unlocks audio
     if (mode === 'full') {
       primeIntro();

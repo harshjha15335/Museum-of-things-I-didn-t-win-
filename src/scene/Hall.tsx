@@ -7,6 +7,7 @@ import { exhibits, site } from '../content/exhibits';
 import { C, ARCHWAYS, BANNER_X, LOBBY_END, LOBBY_H } from './palette';
 import { makeCanvasTexture, spacedText } from './textures';
 import { Architecture } from './Architecture';
+import { quality } from './quality';
 
 /**
  * One continuous gallery hall from primitives (spec C2, reworked v2.2).
@@ -81,7 +82,7 @@ function Floor({ lowPower }: { lowPower: boolean }) {
           roughness={0.32}
           metalness={0.45}
           blur={[400, 120]}
-          resolution={512}
+          resolution={quality.reflectorResolution}
           mixBlur={1}
           mixStrength={1.6}
           mixContrast={1.1}
@@ -316,8 +317,16 @@ export function HallLights({ lowPower }: { lowPower: boolean }) {
       <hemisphereLight args={["#8C6A4E", "#0A0605", 0.95]} />
       <ambientLight color="#B08A66" intensity={0.06} />
       <Env />
-      {washXs.map((x) => (
-        <pointLight key={x} position={[x, 4.5, -3.4]} color="#FFD2A0" intensity={lowPower ? 13 : 16} distance={7} decay={1.1} />
+      {/* Low power keeps every other wash, brighter and wider: half the per-pixel light loop on budget GPUs. */}
+      {(lowPower ? washXs.filter((_, i) => i % 2 === 0) : washXs).map((x) => (
+        <pointLight
+          key={x}
+          position={[lowPower ? x + 3.5 : x, 4.5, -3.4]}
+          color="#FFD2A0"
+          intensity={lowPower ? 17 : 16}
+          distance={lowPower ? 10 : 7}
+          decay={1.1}
+        />
       ))}
       {/* Lobby atrium: cool light falling from the skylight, plus two soft wall grazers */}
       <spotLight

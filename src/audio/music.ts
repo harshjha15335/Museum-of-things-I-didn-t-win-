@@ -63,6 +63,11 @@ let bar = 0;
 function schedule() {
   if (!ctx) return;
   const BAR = 8;
+  if (ctx.state !== 'running') {
+    // suspended (tab hidden / iOS interruption): don't pile up bars on a frozen clock
+    timer = window.setTimeout(schedule, 1000);
+    return;
+  }
   const at = ctx.currentTime + 0.1;
   pad(at, CHORDS[bar % CHORDS.length], BAR);
   for (let i = 0; i < 3; i++) {
@@ -113,6 +118,16 @@ export function sting() {
   if (!ctx || target === 0) return;
   const at = ctx.currentTime + 0.02;
   [76, 81, 88].forEach((n, i) => bell(at + i * 0.09, n, 0.09));
+}
+
+/** Page hidden: freeze the music clock. */
+export function suspendMusic() {
+  if (ctx && ctx.state === 'running') void ctx.suspend().catch(() => {});
+}
+
+/** Page visible again, or any tap (iOS leaves the context "interrupted" after calls/Siri). */
+export function resumeMusic() {
+  if (ctx && ctx.state !== 'running' && ctx.state !== 'closed') void ctx.resume().catch(() => {});
 }
 
 export function stopMusic() {

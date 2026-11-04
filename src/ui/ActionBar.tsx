@@ -23,27 +23,27 @@ export function ActionBar() {
     <nav className="actions" aria-label="Actions">
       {readable && !readerOpen && (
         <button className={`act primary ${phase === 'idle' ? 'pulse' : ''}`} onClick={() => S().openReader()}>
-          <Key k="E" /> {ex.id === 'samsung' && phase === 'idle' ? hud.promptInspect : hud.promptRead}
+          <Key k="E" /> <span className="act-label">{ex.id === 'samsung' && phase === 'idle' ? hud.promptInspect : hud.promptRead}</span>
         </button>
       )}
       {readerOpen && (
-        <button className="act" onClick={() => S().closeReader()}>
-          <Key k="E" /> {hud.promptClose}
+        <button className="act close" onClick={() => S().closeReader()}>
+          <Key k="E" /> <span className="act-label">{hud.promptClose}</span>
         </button>
       )}
       {phase === 'recovered' && !narrating && ex.narration.length > 0 && (
-        <button className="act" onClick={() => S().replay()}>
-          <Key k="R" /> {hud.promptReplay}
+        <button className="act replay" onClick={() => S().replay()}>
+          <Key k="R" /> <span className="act-label">{hud.promptReplay}</span>
         </button>
       )}
       {station > 0 && (
-        <button className="act" onClick={() => S().goBack()}>
-          <Key k="←" /> {hud.promptBack}
+        <button className="act back" aria-label={hud.promptBack} onClick={() => S().goBack()}>
+          <Key k="←" /> <span className="act-label">{hud.promptBack}</span>
         </button>
       )}
       {!last && (
-        <button className={`act next ${nextPulse ? 'flash' : ''}`} key={nextPulse} onClick={() => S().goNext()}>
-          <Key k="→" /> {hud.promptNext}
+        <button className={`act next ${nextPulse ? 'flash' : ''}`} aria-label={hud.promptNext} key={nextPulse} onClick={() => S().goNext()}>
+          <Key k="→" /> <span className="act-label">{hud.promptNext}</span>
         </button>
       )}
     </nav>

@@ -2,6 +2,7 @@ import { exhibits, type Exhibit } from '../content/exhibits';
 import { useMuseum } from '../state/store';
 import { say, hush, voiceSupported } from './voice';
 import { setMusicLevel, sting } from './music';
+import { trackVoice } from './lifecycle';
 
 /**
  * Narration + caption clock (spec C6).
@@ -64,6 +65,7 @@ class Narrator {
       a.currentTime = 0;
       a.muted = useMuseum.getState().muted;
       this.audio = a;
+      trackVoice(a);
       a.play()
         .then(() => {
           if (this.audio === a) this.useAudio = true;

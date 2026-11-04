@@ -94,7 +94,7 @@ export const site = {
   musicOff: 'Music off',
   pathLabel: 'Story path',
   noWebGL:
-    'You are viewing the text edition of the museum. The illustrated phone version is still being installed.',
+    "Your browser can't show the 3D museum, so here's the text edition.",
   closingLine: "This museum has no ending yet. That's why I'm applying.",
 };
 

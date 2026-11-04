@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { C } from './palette';
+import { quality } from './quality';
 
 /**
  * One gold SpotLight per exhibit at ceiling height in front of the plinth (spec E3),
@@ -79,8 +80,8 @@ export function Spot({
         decay={1.4}
         distance={14}
         castShadow={active && !lowPower}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={quality.shadowMap}
+        shadow-mapSize-height={quality.shadowMap}
         shadow-bias={-0.0004}
         shadow-camera-near={0.5}
         shadow-camera-far={14}
